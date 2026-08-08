@@ -1,153 +1,43 @@
 import React, { useEffect, useState } from "react";
-import {
-  AppBar,
-  Toolbar,
-  Button,
-  Link,
-  Box,
-  Card,
-  CardHeader,
-  CardContent,
-  CardActions,
-  Typography,
-  Container,
-  Grid,
-} from "@mui/material";
-import axios from "axios";
+import { useLocation } from "react-router-dom";
+
+import Hero from "../components/Hero";
+import Categories from "../components/Categories";
+import ProductsSection from "../components/ProductsSection";
 
 const Home = () => {
-  const [featuredProducts, setFeaturedProducts] = useState([]);
+  const location = useLocation();
 
-  const fetchProducts = async () => {
-    try {
-      const response = await axios.get("http://localhost:3010/api/produits");
-      setFeaturedProducts(response.data.data);
-    } catch (error) {
-      console.error("Error fetching products:", error);
-    }
-  };
+  const [selectedCategory, setSelectedCategory] =
+    useState("Toutes");
 
+  // Scroll automatique vers les produits
+  // quand on vient de À propos / Contact
   useEffect(() => {
-    fetchProducts();
-  }, []);
+    if (location.state?.scrollTo === "products") {
+      setTimeout(() => {
+        document
+          .getElementById("products")
+          ?.scrollIntoView({
+            behavior: "smooth",
+          });
+      }, 300);
+    }
+  }, [location]);
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column" }}>
-      <Box
-        sx={{
-          py: 6,
-          backgroundColor: "primary.main",
-          color: "white",
-          textAlign: "center",
-        }}
-      >
-        <Typography variant="h3" component="h1" gutterBottom>
-          Discover Our Exclusive Products
-        </Typography>
-        <Typography variant="h6">
-          Welcome to E-Shop — your trusted online store for quality and value.
-        </Typography>
-      </Box>
+    <>
+      <Hero />
 
-      {/* Main Content */}
-      <Container maxWidth="lg" sx={{ flexGrow: 1, py: 5 }}>
-        {/* Why Choose Us */}
-        <Box sx={{ mb: 6 }}>
-          <Typography variant="h4" textAlign="center" gutterBottom> 
-            Why Shop With Us
-          </Typography>
-          <Grid container spacing={3} justifyContent="center">
-  {[
-    {
-      text: "Exceptional Customer Satisfaction",
-      image: "https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=600&q=80",
-      alt: "Happy customers shopping"
-    },
-    {
-      text: "Eco-Friendly & Natural Products",
-      image: "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=600&q=80",
-      alt: "Natural eco-friendly products"
-    },
-    {
-      text: "Reliable & Fast Delivery",
-      image: "https://images.unsplash.com/photo-1586528116110-d9fac8a1109e?auto=format&fit=crop&w=600&q=80",
-      alt: "Delivery van on the road"
-    },
-  ].map((feature, index) => (
-    <Grid item xs={12} md={4} key={index}>
-      <Card elevation={3} sx={{ textAlign: "center", py: 3 }}>
-        <CardContent>
-          <Typography variant="h6">{feature.text}</Typography>
-          <img
-            src={feature.image}
-            alt={feature.alt}
-            style={{ width: "100%", maxHeight: "200px", objectFit: "cover", marginTop: "16px" }}
-          />
-        </CardContent>
-      </Card>
-    </Grid>
-  ))}
-</Grid>
-        </Box>
+      <Categories
+        selectedCategory={selectedCategory}
+        setSelectedCategory={setSelectedCategory}
+      />
 
-        <Box sx={{ mb: 6 }}>
-          <Typography variant="h4" textAlign="center" gutterBottom>
-            Featured Products
-          </Typography>
-          <Typography variant="body1" textAlign="center" mb={3}>
-            Handpicked items just for you — high-quality, popular, and
-            best-selling!
-          </Typography>
-          <Grid container spacing={3}>
-            {featuredProducts.map((item, index) => (
-              <Grid item xs={12} sm={6} md={4} key={index}>
-                <Card>
-                  <CardHeader title={item.name} />
-                  <CardContent>
-                    <Typography variant="body2" gutterBottom>
-                      Category: <strong>{item.category}</strong>
-                    </Typography>
-                    <Typography variant="body2" gutterBottom>
-                      {item.description}
-                    </Typography>
-                    <Typography
-                      variant="body1"
-                      color="primary"
-                      fontWeight="bold"
-                      mt={1}
-                    >
-                      ${item.price}
-                    </Typography>
-                  </CardContent>
-                  <CardActions>
-                    <Button fullWidth variant="contained" color="primary">
-                      View Product
-                    </Button>
-                  </CardActions>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
-        </Box>
-
-        <Box sx={{ mb: 6 }}>
-          <Typography variant="h4" textAlign="center" gutterBottom>
-            About Our Store
-          </Typography>
-          <Typography
-            variant="body1"
-            textAlign="center"
-            sx={{ px: { xs: 2, md: 6 }, lineHeight: 1.8 }}
-          >
-            At E-Shop, we believe shopping should be easy, enjoyable, and
-            sustainable. Our team carefully curates high-quality products to
-            meet your needs while ensuring ethical sourcing and fast delivery.
-            Whether you're looking for daily essentials or special gifts, E-Shop
-            has you covered.
-          </Typography>
-        </Box>
-      </Container>
-    </Box>
+      <ProductsSection
+        selectedCategory={selectedCategory}
+      />
+    </>
   );
 };
 

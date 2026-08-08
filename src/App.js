@@ -1,8 +1,13 @@
 import React from "react";
+import { CartProvider } from "./context/CartContext";
 import MainNavigation from "./navigation/MainNavigation";
 
-const App = () => {
-  return <MainNavigation />;
-};
+function App() {
+  return (
+    <CartProvider>
+      <MainNavigation />
+    </CartProvider>
+  );
+}
 
 export default App;
