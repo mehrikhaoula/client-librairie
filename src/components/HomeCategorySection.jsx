@@ -3,26 +3,19 @@ import React, {
   useState,
   useContext,
 } from "react";
-
 import {
   Box,
   Button,
   Container,
   Typography,
 } from "@mui/material";
-
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-
 import axios from "axios";
-
 import { useNavigate } from "react-router-dom";
-
 import ProductCard from "./ProductCard";
-
 import {
   FavoritesContext,
 } from "../context/FavoritesContext";
-
 import ProductDetailsDialog from "./ProductDetailsDialog";
 
 const HomeCategorySection = ({
