@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 
 import axios from "axios";
-
+import { endpoint } from "../utils/config";
 import ProductCard from "./ProductCard";
 import ProductDetailsDialog from "./ProductDetailsDialog";
 
@@ -39,8 +39,8 @@ const MostOrderedSection = () => {
     const fetchMostOrdered = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:3010/api/orders/most-ordered"
-        );
+  `${endpoint.getAllOrders}/most-ordered`
+);
 
         const mostOrdered =
           response.data.data || [];

@@ -1,5 +1,5 @@
-const API_BASE_URL = "http://localhost:3010/api";
-const API_BASE_URL_BASE = "http://localhost:3010";
+const API_BASE_URL = "https://backlibrairie.onrender.com/api";
+const API_BASE_URL_BASE = "https://backlibrairie.onrender.com";
 
 export const endpoint = {
   login: `${API_BASE_URL}/login`,

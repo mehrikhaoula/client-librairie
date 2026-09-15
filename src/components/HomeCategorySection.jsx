@@ -13,10 +13,9 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import ProductCard from "./ProductCard";
-import {
-  FavoritesContext,
-} from "../context/FavoritesContext";
+import { FavoritesContext,} from "../context/FavoritesContext";
 import ProductDetailsDialog from "./ProductDetailsDialog";
+import { endpoint } from "../utils/config";
 
 const HomeCategorySection = ({
   category,
@@ -47,10 +46,9 @@ const HomeCategorySection = ({
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response =
-          await axios.get(
-            "http://localhost:3010/api/produits"
-          );
+       const response = await axios.get(
+  endpoint.getAllProduit
+);
 
         const allProducts =
           response.data.data || [];

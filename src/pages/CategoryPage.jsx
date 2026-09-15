@@ -173,7 +173,7 @@ const CategoryPage = () => {
 
         const response =
           await axios.get(
-            "http://localhost:3010/api/produits"
+            "/api/produits"
           );
 
         setProducts(

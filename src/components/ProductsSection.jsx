@@ -43,9 +43,9 @@ const ProductsSection = ({
   // =========================
 
   useEffect(() => {
-    axios
-      .get("http://localhost:3010/api/produits")
-      .then((res) => {
+  axios
+    .get(endpoint.getAllProduit)
+    .then((res) => {
         console.log(
           "📦 PRODUIT :",
           res.data.data[0]
