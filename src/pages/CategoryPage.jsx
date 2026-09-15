@@ -5,7 +5,7 @@ import {
 } from "@mui/material";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import axios from "axios";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+
 import CloseIcon from "@mui/icons-material/Close";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";

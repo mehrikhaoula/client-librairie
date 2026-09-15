@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 
 import Hero from "../components/Hero";
@@ -10,19 +10,13 @@ const Home = () => {
   const location = useLocation();
 
   const [selectedCategory, setSelectedCategory] =
-    useState("Toutes");
-
-  const [search, setSearch] = useState("");
+    React.useState("Toutes");
 
   // ==========================================
   // SCROLL DEPUIS ABOUT / CONTACT
   // ==========================================
 
   useEffect(() => {
-    if (location.state?.search !== undefined) {
-      setSearch(location.state.search);
-    }
-
     if (location.state?.scrollTo === "products") {
       setTimeout(() => {
         document
@@ -103,7 +97,6 @@ const Home = () => {
         soft="#EDE0E4"
       />
     </>
-    
   );
 };
 
