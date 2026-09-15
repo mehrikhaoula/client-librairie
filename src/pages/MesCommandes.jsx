@@ -1,0 +1,508 @@
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+
+import {
+  Container,
+  Typography,
+  Box,
+  Paper,
+  Divider,
+  Button,
+  CircularProgress,
+} from "@mui/material";
+
+import EditIcon from "@mui/icons-material/Edit";
+import LockIcon from "@mui/icons-material/Lock";
+
+import { useNavigate } from "react-router-dom";
+import { endpoint } from "../utils/config";
+
+const MesCommandes = () => {
+  const navigate = useNavigate();
+
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [connected, setConnected] = useState(false);
+
+  // =====================================
+  // Récupérer les commandes
+  // =====================================
+
+  useEffect(() => {
+    const getMyOrders = async () => {
+      try {
+        setLoading(true);
+
+        console.log("🔐 Vérification commandes...");
+        console.log("🌐 URL:", endpoint.myOrders);
+
+        const response = await axios.get(
+          endpoint.myOrders,
+          {
+            withCredentials: true,
+          }
+        );
+
+        console.log(
+          "✅ MY ORDERS STATUS:",
+          response.status
+        );
+
+        console.log(
+          "✅ MY ORDERS RESPONSE:",
+          response.data
+        );
+
+        setConnected(true);
+
+        setOrders(
+          response.data?.orders ||
+            response.data ||
+            []
+        );
+      } catch (error) {
+        console.error(
+          "❌ MES COMMANDES ERROR:",
+          error
+        );
+
+        if (axios.isAxiosError(error)) {
+          console.error(
+            "❌ STATUS:",
+            error.response?.status
+          );
+
+          console.error(
+            "❌ DATA:",
+            error.response?.data
+          );
+
+          console.error(
+            "❌ URL:",
+            error.config?.url
+          );
+        }
+
+        if (
+          axios.isAxiosError(error) &&
+          error.response?.status === 401
+        ) {
+          console.log(
+            "🚫 Non connecté → Login"
+          );
+
+          setConnected(false);
+
+          navigate("/login", {
+            state: {
+              from: "/mes-commandes",
+            },
+            replace: true,
+          });
+
+          return;
+        }
+
+        setConnected(true);
+        setOrders([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    getMyOrders();
+  }, [navigate]);
+
+  // =====================================
+  // Vérifier le statut
+  // =====================================
+
+  const getOrderStatus = (order) => {
+    return (
+      order.status
+        ?.toString()
+        .trim()
+        .toLowerCase() || "en attente"
+    );
+  };
+
+  const isPending = (order) => {
+    return (
+      getOrderStatus(order) ===
+      "en attente"
+    );
+  };
+
+  const isConfirmed = (order) => {
+    return (
+      getOrderStatus(order) ===
+      "confirmée"
+    );
+  };
+
+  // =====================================
+  // Modifier une commande
+  // =====================================
+
+const handleEditOrder = (order) => {
+  console.log(
+    "✏️ Modification commande :",
+    order._id
+  );
+
+  navigate(`/modifier-commande/${order._id}`, {
+    state: {
+      editOrder: order,
+    },
+  });
+};
+
+  // =====================================
+  // Loading
+  // =====================================
+
+  if (loading) {
+    return (
+      <Container
+        maxWidth="md"
+        sx={{
+          pt: 14,
+          pb: 8,
+          textAlign: "center",
+        }}
+      >
+        <CircularProgress />
+
+        <Typography
+          sx={{ mt: 2 }}
+          color="text.secondary"
+        >
+          Chargement de vos commandes...
+        </Typography>
+      </Container>
+    );
+  }
+
+  // =====================================
+  // Non connecté
+  // =====================================
+
+  if (!connected) {
+    return null;
+  }
+
+  // =====================================
+  // Aucune commande
+  // =====================================
+
+  if (orders.length === 0) {
+    return (
+      <Container
+        maxWidth="md"
+        sx={{
+          pt: 14,
+          pb: 8,
+          textAlign: "center",
+        }}
+      >
+        <Typography
+          variant="h5"
+          fontWeight="bold"
+          mb={2}
+        >
+          Mes commandes 📦
+        </Typography>
+
+        <Typography
+          color="text.secondary"
+          mb={3}
+        >
+          Vous n'avez encore passé aucune
+          commande.
+        </Typography>
+
+        <Button
+          variant="contained"
+          onClick={() =>
+            navigate("/")
+          }
+          sx={{
+            textTransform: "none",
+            borderRadius: 2,
+            fontWeight: "bold",
+          }}
+        >
+          Découvrir nos produits
+        </Button>
+      </Container>
+    );
+  }
+
+  // =====================================
+  // Affichage commandes
+  // =====================================
+
+  return (
+    <Container
+      maxWidth="md"
+      sx={{
+        pt: 14,
+        pb: 8,
+      }}
+    >
+      <Typography
+        variant="h4"
+        fontWeight="bold"
+        mb={4}
+      >
+        Mes commandes 📦
+      </Typography>
+
+      {orders.map((order, index) => {
+        const pending =
+          isPending(order);
+
+        const confirmed =
+          isConfirmed(order);
+
+        return (
+          <Paper
+            key={order._id || index}
+            elevation={3}
+            sx={{
+              p: 3,
+              mb: 3,
+              borderRadius: 3,
+            }}
+          >
+            {/* ================================= */}
+            {/* HEADER */}
+            {/* ================================= */}
+
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent:
+                  "space-between",
+                alignItems: {
+                  xs: "flex-start",
+                  sm: "center",
+                },
+                flexDirection: {
+                  xs: "column",
+                  sm: "row",
+                },
+                gap: 1,
+              }}
+            >
+              <Box>
+                <Typography
+                  fontWeight="bold"
+                  fontSize="18px"
+                >
+                  Commande #
+                  {order._id
+                    ?.toString()
+                    .slice(-8)}
+                </Typography>
+
+                <Typography
+                  color="text.secondary"
+                  fontSize="14px"
+                >
+                  {order.createdAt
+                    ? new Date(
+                        order.createdAt
+                      ).toLocaleDateString(
+                        "fr-FR"
+                      )
+                    : "Date inconnue"}
+                </Typography>
+              </Box>
+
+              {/* STATUT */}
+
+              <Typography
+                sx={{
+                  fontWeight: "bold",
+                  color: pending
+                    ? "#f59e0b"
+                    : confirmed
+                    ? "#16a34a"
+                    : "text.primary",
+                }}
+              >
+                {pending
+                  ? "🟠 En attente"
+                  : confirmed
+                  ? "🟢 Confirmée"
+                  : order.status}
+              </Typography>
+            </Box>
+
+            <Divider sx={{ my: 2 }} />
+
+            {/* ================================= */}
+            {/* PRODUITS */}
+            {/* ================================= */}
+
+            {order.items?.map(
+              (item, itemIndex) => (
+                <Box
+                  key={
+                    item.productId ||
+                    itemIndex
+                  }
+                  sx={{
+                    display: "flex",
+                    justifyContent:
+                      "space-between",
+                    alignItems:
+                      "center",
+                    py: 1,
+                    gap: 2,
+                  }}
+                >
+                  <Box
+                    sx={{
+                      flex: 1,
+                      minWidth: 0,
+                    }}
+                  >
+                    <Typography
+                      fontWeight="600"
+                      sx={{
+                        overflow:
+                          "hidden",
+                        textOverflow:
+                          "ellipsis",
+                        whiteSpace:
+                          "nowrap",
+                      }}
+                    >
+                      {item.name}
+                    </Typography>
+
+                    <Typography
+                      color="text.secondary"
+                      fontSize="14px"
+                    >
+                      Quantité :{" "}
+                      {item.quantity}
+                    </Typography>
+                  </Box>
+
+                  <Typography
+                    fontWeight="bold"
+                    sx={{
+                      whiteSpace:
+                        "nowrap",
+                    }}
+                  >
+                    {(
+                      Number(
+                        item.price
+                      ) *
+                      Number(
+                        item.quantity
+                      )
+                    ).toFixed(2)}{" "}
+                    DT
+                  </Typography>
+                </Box>
+              )
+            )}
+
+            <Divider sx={{ my: 2 }} />
+
+            {/* ================================= */}
+            {/* TOTAL */}
+            {/* ================================= */}
+
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent:
+                  "space-between",
+                alignItems: "center",
+              }}
+            >
+              <Typography
+                fontWeight="bold"
+              >
+                Total
+              </Typography>
+
+              <Typography
+                variant="h6"
+                fontWeight="bold"
+                color="primary"
+              >
+                {Number(
+                  order.total || 0
+                ).toFixed(2)}{" "}
+                DT
+              </Typography>
+            </Box>
+
+            {/* ================================= */}
+            {/* ACTION */}
+            {/* ================================= */}
+
+            {pending && (
+              <Button
+                variant="outlined"
+                fullWidth
+                startIcon={<EditIcon />}
+                onClick={() =>
+                  handleEditOrder(order)
+                }
+                sx={{
+                  mt: 3,
+                  py: 1.2,
+                  borderRadius: 2,
+                  fontWeight: "bold",
+                  textTransform:
+                    "none",
+                }}
+              >
+                Modifier la commande
+              </Button>
+            )}
+
+            {confirmed && (
+              <Box
+                sx={{
+                  mt: 3,
+                  display: "flex",
+                  alignItems:
+                    "center",
+                  justifyContent:
+                    "center",
+                  gap: 1,
+                  p: 1.5,
+                  borderRadius: 2,
+                  backgroundColor:
+                    "#f0fdf4",
+                  color: "#15803d",
+                }}
+              >
+                <LockIcon fontSize="small" />
+
+                <Typography
+                  fontSize="14px"
+                  fontWeight="600"
+                >
+                  Cette commande est confirmée
+                  et ne peut plus être modifiée.
+                </Typography>
+              </Box>
+            )}
+          </Paper>
+        );
+      })}
+    </Container>
+  );
+};
+
+export default MesCommandes;

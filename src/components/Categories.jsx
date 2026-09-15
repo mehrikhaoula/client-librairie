@@ -1,12 +1,8 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React from "react";
 import {
   Box,
-  Container,
-  Grid,
-  Paper,
   Typography,
-  Avatar,
+  IconButton,
 } from "@mui/material";
 
 import MenuBookIcon from "@mui/icons-material/MenuBook";
@@ -14,187 +10,377 @@ import SchoolIcon from "@mui/icons-material/School";
 import BrushIcon from "@mui/icons-material/Brush";
 import BackpackIcon from "@mui/icons-material/Backpack";
 import AutoStoriesIcon from "@mui/icons-material/AutoStories";
+import PaletteIcon from "@mui/icons-material/Palette";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
+import { useNavigate } from "react-router-dom";
 
 const Categories = ({
   selectedCategory,
   setSelectedCategory,
 }) => {
-  const [categories, setCategories] = useState([]);
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    axios
-      .get("http://localhost:3010/api/produits")
-      .then((res) => {
-        const data = res.data.data;
-        const uniqueCategories = [
-          "Toutes",
-          ...new Set(data.map((item) => item.category)),
-        ];
-        setCategories(uniqueCategories);
-      })
-      .catch((err) => console.log(err));
-  }, []);
+  const categories = [
+    "Toutes",
+    "BEAUX-ARTS",
+    "LOISIRS CRÉATIFS",
+    "FOURNITURE BOUGIES",
+    "PAPIERS",
+    "Étudiants",
+    "Couture- Stylisme",
+  ];
 
-  const getIcon = (cat) => {
-    const c = cat.toLowerCase();
+  // =========================
+  // SLUG DES CATÉGORIES
+  // =========================
 
-    if (c.includes("liv")) return <AutoStoriesIcon fontSize="large" />;
-    if (c.includes("scol")) return <SchoolIcon fontSize="large" />;
-    if (c.includes("art")) return <BrushIcon fontSize="large" />;
-    if (c.includes("sac")) return <BackpackIcon fontSize="large" />;
+  const categorySlugs = {
+    "BEAUX-ARTS": "beaux-arts",
+    "LOISIRS CRÉATIFS": "loisirs-creatifs",
+    "FOURNITURE BOUGIES": "fourniture-bougies",
+    "PAPIERS": "papiers",
+    "Étudiants": "etudiants",
+    "Couture- Stylisme": "couture-stylisme",
+  };
 
-    return <MenuBookIcon fontSize="large" />;
+  // =========================
+  // ICÔNES
+  // =========================
+
+  const getIcon = (category) => {
+    switch (category) {
+      case "Toutes":
+        return <MenuBookIcon />;
+
+      case "BEAUX-ARTS":
+        return <PaletteIcon />;
+
+      case "LOISIRS CRÉATIFS":
+        return <BrushIcon />;
+
+      case "FOURNITURE BOUGIES":
+        return <AutoStoriesIcon />;
+
+      case "PAPIERS":
+        return <MenuBookIcon />;
+
+      case "Étudiants":
+        return <SchoolIcon />;
+
+      case "Couture- Stylisme":
+        return <BackpackIcon />;
+
+      default:
+        return <MenuBookIcon />;
+    }
+  };
+
+  // =========================
+  // CLICK CATÉGORIE
+  // =========================
+
+  const handleCategoryClick = (category) => {
+    // Toutes → accueil
+    if (category === "Toutes") {
+      setSelectedCategory("Toutes");
+      navigate("/");
+      return;
+    }
+
+    // Sélectionner la catégorie
+    setSelectedCategory(category);
+
+    // Récupérer le slug
+    const slug = categorySlugs[category];
+
+    if (slug) {
+      navigate(`/categorie/${slug}`);
+    }
+  };
+
+  // =========================
+  // SCROLL
+  // =========================
+
+  const scrollCategories = (direction) => {
+    const container = document.getElementById("categories-scroll");
+
+    if (!container) return;
+
+    container.scrollBy({
+      left: direction === "left" ? -300 : 300,
+      behavior: "smooth",
+    });
   };
 
   return (
     <Box
       id="categories"
       sx={{
-        py: 10,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
+        width: "100%",
+        py: { xs: 2, md: 2.5 },
+        background:
+  "linear-gradient(180deg, #FFFFFF 0%, #EDE4D6 100%)",
+        borderBottom: "1px solid #eee",
+        position: "relative",
+        zIndex: 20,
       }}
     >
-      <Container maxWidth="lg">
+      <Box
+        sx={{
+          maxWidth: "1400px",
+          mx: "auto",
+          px: {
+            xs: 1.5,
+            sm: 2,
+            md: 3,
+          },
+        }}
+      >
 
-        {/* Décoration */}
+        {/* =========================
+            TITRE
+        ========================= */}
 
         <Box
           sx={{
             display: "flex",
-            justifyContent: "center",
             alignItems: "center",
-            gap: 2,
-            mb: 2,
+            justifyContent: "center",
+            gap: 1,
+            mb: 1.5,
           }}
         >
-          <Box
-            sx={{
-              width: 90,
-              height: "2px",
-              bgcolor: "#C9A66B",
-            }}
-          />
-
           <MenuBookIcon
             sx={{
               color: "#C9A66B",
-              fontSize: 38,
+              fontSize: {
+                xs: 23,
+                sm: 27,
+              },
             }}
           />
 
-          <Box
+          <Typography
             sx={{
-              width: 90,
-              height: "2px",
-              bgcolor: "#C9A66B",
+              fontWeight: "bold",
+              color: "#173A69",
+              fontFamily: "serif",
+              fontSize: {
+                xs: "1rem",
+                sm: "1.15rem",
+              },
             }}
-          />
+          >
+            Catégories
+          </Typography>
         </Box>
 
-        <Typography
-          variant="h3"
-          align="center"
+        {/* =========================
+            BARRE CATÉGORIES
+        ========================= */}
+
+        <Box
           sx={{
-            fontWeight: "bold",
-            color: "#14345D",
-            fontFamily: "serif",
+            position: "relative",
+            display: "flex",
+            alignItems: "center",
           }}
         >
-          Nos Catégories
-        </Typography>
 
-        <Typography
-          align="center"
-          sx={{
-            color: "#555",
-            mt: 1,
-            mb: 7,
-            fontSize: "1.15rem",
-          }}
-        >
-          Trouvez facilement ce que vous cherchez
-        </Typography>
+          {/* FLÈCHE GAUCHE */}
 
-        <Grid
-          container
-          spacing={4}
-          justifyContent="center"
-        >
-          {categories.map((cat, index) => (
-            <Grid
-              item
-              xs={6}
-              sm={4}
-              md={2.4}
-              key={index}
-            >
-              <Paper
-                elevation={0}
-                onClick={() =>
-                  setSelectedCategory(cat)
-                }
-                sx={{
-                  p: 4,
-                  borderRadius: "28px",
-                  textAlign: "center",
-                  cursor: "pointer",
-                  transition: ".35s",
+          <IconButton
+            onClick={() => scrollCategories("left")}
+            sx={{
+              display: {
+                xs: "none",
+                md: "flex",
+              },
+              mr: 1,
+              width: 38,
+              height: 38,
+              border: "1px solid #E8DDCE",
+              background: "#fff",
+              color: "#173A69",
+              boxShadow: "0 4px 12px rgba(0,0,0,.08)",
 
-                  border:
-                    selectedCategory === cat
-                      ? "2px solid #173A69"
-                      : "1px solid #E6D8C3",
+              "&:hover": {
+                background: "#F9F5EF",
+              },
+            }}
+          >
+            <ChevronLeftIcon />
+          </IconButton>
 
-                  bgcolor:
-                    selectedCategory === cat
+          {/* CATÉGORIES */}
+
+          <Box
+            id="categories-scroll"
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 1,
+              width: "100%",
+
+              overflowX: "auto",
+              overflowY: "hidden",
+
+              scrollBehavior: "smooth",
+
+              scrollbarWidth: "none",
+
+              "&::-webkit-scrollbar": {
+                display: "none",
+              },
+
+              py: 0.5,
+
+              px: {
+                xs: 0.5,
+                md: 0,
+              },
+            }}
+          >
+            {categories.map((category) => {
+
+              const selected =
+                selectedCategory === category;
+
+              return (
+                <Box
+                  key={category}
+                  onClick={() =>
+                    handleCategoryClick(category)
+                  }
+                  sx={{
+                    flexShrink: 0,
+
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 0.8,
+
+                    px: {
+                      xs: 1.5,
+                      sm: 2,
+                    },
+
+                    py: 1,
+
+                    borderRadius: 3,
+
+                    cursor: "pointer",
+
+                    whiteSpace: "nowrap",
+
+                    border: selected
+                      ? "1px solid #173A69"
+                      : "1px solid #E8DDCE",
+
+                    background: selected
                       ? "#173A69"
-                      : "rgba(255,255,255,.90)",
+                      : "#fff",
 
-                  "&:hover": {
-                    transform: "translateY(-10px)",
-                    boxShadow: "0 18px 35px rgba(0,0,0,.15)",
-                  },
-                }}
-              >
-                <Avatar
-                  sx={{
-                    width: 80,
-                    height: 80,
-                    margin: "auto",
-                    bgcolor:
-                      selectedCategory === cat
-                        ? "#fff"
-                        : "#F7EFE5",
-                    color:
-                      selectedCategory === cat
+                    color: selected
+                      ? "#fff"
+                      : "#173A69",
+
+                    fontWeight: selected
+                      ? "bold"
+                      : 500,
+
+                    transition:
+                      "all .25s ease",
+
+                    boxShadow: selected
+                      ? "0 5px 15px rgba(23,58,105,.18)"
+                      : "none",
+
+                    "&:hover": {
+                      background: selected
                         ? "#173A69"
-                        : "#173A69",
-                    mb: 3,
+                        : "#F9F5EF",
+
+                      borderColor: "#C9A66B",
+
+                      transform:
+                        "translateY(-2px)",
+                    },
                   }}
                 >
-                  {getIcon(cat)}
-                </Avatar>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
 
-                <Typography
-                  sx={{
-                    fontWeight: "bold",
-                    fontSize: "1rem",
-                    color:
-                      selectedCategory === cat
-                        ? "#fff"
-                        : "#173A69",
-                  }}
-                >
-                  {cat}
-                </Typography>
-              </Paper>
-            </Grid>
-          ))}
-        </Grid>
+                      "& svg": {
+                        fontSize: {
+                          xs: 17,
+                          sm: 19,
+                        },
+                      },
+                    }}
+                  >
+                    {getIcon(category)}
+                  </Box>
 
-      </Container>
+                  <Typography
+                    component="span"
+                    sx={{
+                      fontSize: {
+                        xs: "0.75rem",
+                        sm: "0.82rem",
+                        md: "0.88rem",
+                      },
+
+                      fontWeight: "inherit",
+
+                      color: "inherit",
+                    }}
+                  >
+                    {category}
+                  </Typography>
+                </Box>
+              );
+            })}
+          </Box>
+
+          {/* FLÈCHE DROITE */}
+
+          <IconButton
+            onClick={() => scrollCategories("right")}
+            sx={{
+              display: {
+                xs: "none",
+                md: "flex",
+              },
+
+              ml: 1,
+
+              width: 38,
+              height: 38,
+
+              border: "1px solid #E8DDCE",
+
+              background: "#fff",
+
+              color: "#173A69",
+
+              boxShadow:
+                "0 4px 12px rgba(0,0,0,.08)",
+
+              "&:hover": {
+                background: "#F9F5EF",
+              },
+            }}
+          >
+            <ChevronRightIcon />
+          </IconButton>
+
+        </Box>
+      </Box>
     </Box>
   );
 };

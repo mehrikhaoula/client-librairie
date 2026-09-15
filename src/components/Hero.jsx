@@ -40,7 +40,7 @@ const Hero = () => {
       sx={{
         fontSize: {
           xs: "2rem",
-          md: "3rem",
+          md: "2rem",
         },
         fontWeight: 500,
         fontFamily: "Playfair Display, serif",
@@ -55,8 +55,8 @@ const Hero = () => {
     <Typography
       sx={{
         fontSize: {
-          xs: "3.5rem",
-          md: "5.5rem",
+          xs: "3rem",
+          md: "5rem",
         },
         fontWeight: "bold",
         fontFamily: "Playfair Display, serif",
@@ -116,12 +116,12 @@ const Hero = () => {
         },
         color: "#444",
         lineHeight: 1.8,
-        maxWidth: "700px",
+        maxWidth: "600px",
         mb: 5,
       }}
     >
       Découvrez une large sélection des fournitures
-      de Beaux Art, Arisanat, Founitures Scolaires et articles de bureau de qualité pour tous les
+      de Beaux Art, Arisanat, Fournitures Scolaires et articles de bureau de qualité pour tous les
       âges.
       Tout ce dont vous avez besoin pour apprendre, créer et réussir.
     </Typography>
@@ -134,6 +134,7 @@ const Hero = () => {
       sx={{
         px: 5,
         py: 1.8,
+        mb: 2,
         borderRadius: "40px",
         background: "#16375B",
         textTransform: "none",
