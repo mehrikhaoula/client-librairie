@@ -171,10 +171,9 @@ const CategoryPage = () => {
 
         setLoading(true);
 
-        const response =
-          await axios.get(
-            "/api/produits"
-          );
+        const response = await axios.get(
+  endpoint.getAllProduit
+);
 
         setProducts(
           response.data.data || []
