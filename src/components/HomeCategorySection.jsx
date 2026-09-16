@@ -50,8 +50,15 @@ const HomeCategorySection = ({
   endpoint.getAllProduit
 );
 
-        const allProducts =
-          response.data.data || [];
+console.log("🔥 PRODUITS RESPONSE :", response.data);
+console.log("🔥 TYPE :", Array.isArray(response.data));
+console.log("🔥 DATA :", response.data.data);
+
+const allProducts = Array.isArray(response.data)
+  ? response.data
+  : response.data.data || [];
+
+console.log("🔥 ALL PRODUCTS :", allProducts);
 
         const categoryProducts =
           allProducts.filter(
