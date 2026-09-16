@@ -24,6 +24,7 @@ import {
   Link,
 } from "react-router-dom";
 import { CartContext } from "../context/CartContext";
+import { useAuth } from "../context/AuthContext";
 
 const Cart = () => {
   // =====================================
@@ -38,6 +39,7 @@ const Cart = () => {
   } = useContext(CartContext);
 
   const navigate = useNavigate();
+const { isAuthenticated, loading } = useAuth();
 
   // =====================================
   // DELETE DIALOG
@@ -66,10 +68,24 @@ const Cart = () => {
   // =====================================
 
   const handleCheckout = () => {
-    if (!cart.length) return;
+  if (!cart.length) return;
 
-    navigate("/checkout");
-  };
+  // Encore en train de vérifier la session
+  if (loading) return;
+
+  // User non connecté → Login
+  if (!isAuthenticated) {
+    navigate("/login", {
+      state: {
+        from: "/checkout",
+      },
+    });
+    return;
+  }
+
+  // User connecté → Checkout
+  navigate("/checkout");
+};
 
   // =====================================
   // DELETE
