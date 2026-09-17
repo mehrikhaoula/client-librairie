@@ -137,9 +137,9 @@ console.log("🔥 ALL PRODUCTS :", allProducts);
   // ==========================================
   // RENDER
   // ==========================================
-
   return (
     <>
+      {/* SECTION */}
       <Box
         sx={{
           background: "#FAF8F4",
@@ -152,7 +152,6 @@ console.log("🔥 ALL PRODUCTS :", allProducts);
         <Container maxWidth="xl">
 
           {/* HEADER */}
-
           <Box
             sx={{
               display: "flex",
@@ -160,8 +159,7 @@ console.log("🔥 ALL PRODUCTS :", allProducts);
                 xs: "flex-start",
                 sm: "center",
               },
-              justifyContent:
-                "space-between",
+              justifyContent: "space-between",
               flexDirection: {
                 xs: "column",
                 sm: "row",
@@ -170,6 +168,7 @@ console.log("🔥 ALL PRODUCTS :", allProducts);
               mb: 2.5,
             }}
           >
+            {/* TITLE */}
             <Box>
               <Typography
                 sx={{
@@ -177,8 +176,7 @@ console.log("🔥 ALL PRODUCTS :", allProducts);
                   fontSize: ".75rem",
                   fontWeight: 700,
                   letterSpacing: 1.5,
-                  textTransform:
-                    "uppercase",
+                  textTransform: "uppercase",
                   mb: 0.5,
                 }}
               >
@@ -188,8 +186,7 @@ console.log("🔥 ALL PRODUCTS :", allProducts);
               <Typography
                 sx={{
                   color: "#243447",
-                  fontFamily:
-                    "Georgia, serif",
+                  fontFamily: "Georgia, serif",
                   fontWeight: 600,
                   fontSize: {
                     xs: "1.45rem",
@@ -201,15 +198,10 @@ console.log("🔥 ALL PRODUCTS :", allProducts);
               </Typography>
             </Box>
 
+            {/* SEE ALL */}
             <Button
-              endIcon={
-                <ChevronRightIcon />
-              }
-              onClick={() =>
-                navigate(
-                  `/categorie/${slug}`
-                )
-              }
+              endIcon={<ChevronRightIcon />}
+              onClick={() => navigate(`/categorie/${slug}`)}
               sx={{
                 color: accent,
                 fontWeight: 700,
@@ -226,20 +218,16 @@ console.log("🔥 ALL PRODUCTS :", allProducts);
           </Box>
 
           {/* PRODUCTS */}
-
           <Box
             sx={{
               display: "flex",
               gap: {
-                xs: 1.5,
+                xs: 0.8,
                 sm: 2,
                 md: 2.5,
               },
-
               overflowX: "auto",
-
               pb: 2,
-
               scrollbarWidth: "none",
 
               "&::-webkit-scrollbar": {
@@ -248,39 +236,30 @@ console.log("🔥 ALL PRODUCTS :", allProducts);
 
               "& > *": {
                 flex: {
-                  xs: "0 0 72%",
+                  xs: "0 0 31%",
                   sm: "0 0 38%",
                   md: "0 0 23%",
                 },
-
                 minWidth: 0,
               },
             }}
           >
-            {products.map(
-              (product) => (
-                <Box
-                  key={product._id}
-                >
-                  <ProductCard
-                    product={product}
-                    favorites={favorites}
-                    toggleFavorite={
-                      toggleFavorite
-                    }
-                    handleOpen={
-                      handleOpen
-                    }
-                  />
-                </Box>
-              )
-            )}
+            {products.map((product) => (
+              <Box key={product._id}>
+                <ProductCard
+                  product={product}
+                  favorites={favorites}
+                  toggleFavorite={toggleFavorite}
+                  handleOpen={handleOpen}
+                />
+              </Box>
+            ))}
           </Box>
+
         </Container>
       </Box>
 
       {/* PRODUCT DETAILS */}
-
       <ProductDetailsDialog
         product={selectedProduct}
         open={open}

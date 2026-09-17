@@ -27,16 +27,7 @@ const ProductCard = ({
   product,
   handleOpen,
 }) => {
-  // =====================================
-  // CART NORMAL UNIQUEMENT
-  // =====================================
-
-  const { addToCart } =
-    useContext(CartContext);
-
-  // =====================================
-  // FAVORIS
-  // =====================================
+  const { addToCart } = useContext(CartContext);
 
   const {
     favorites,
@@ -49,14 +40,9 @@ const ProductCard = ({
     (p) => p._id === product._id
   );
 
-  // =====================================
-  // AJOUTER AU PANIER NORMAL
-  // =====================================
-
   const handleAdd = (e) => {
     setAdded(true);
 
-    // Toujours le panier normal
     flyToCart(
       e,
       product,
@@ -73,7 +59,11 @@ const ProductCard = ({
       className="product-card"
       sx={{
         height: "100%",
-        borderRadius: 5,
+        borderRadius: {
+          xs: 2,
+          sm: 3,
+          md: 5,
+        },
         overflow: "hidden",
         position: "relative",
         transition: ".35s",
@@ -92,9 +82,8 @@ const ProductCard = ({
         },
       }}
     >
-      {/* ================================= */}
+
       {/* DISCOUNT */}
-      {/* ================================= */}
 
       {product.discount > 0 && (
         <Chip
@@ -102,38 +91,41 @@ const ProductCard = ({
           color="error"
           sx={{
             position: "absolute",
-            top: 15,
-            left: 15,
+
+            top: {
+              xs: 5,
+              sm: 8,
+              md: 15,
+            },
+
+            left: {
+              xs: 5,
+              sm: 8,
+              md: 15,
+            },
+
             fontWeight: "bold",
             zIndex: 2,
+
+            fontSize: {
+              xs: "0.55rem",
+              sm: "0.65rem",
+              md: "0.8rem",
+            },
+
+            height: {
+              xs: 20,
+              sm: 24,
+              md: 32,
+            },
           }}
         />
       )}
 
-      {/* ================================= */}
       {/* IMAGE */}
-      {/* ================================= */}
 
       <CardMedia
         component="img"
-        onError={(e) => {
-          console.error(
-            "❌ IMAGE ERROR"
-          );
-          console.error(
-            "URL:",
-            e.currentTarget.src
-          );
-        }}
-        onLoad={(e) => {
-          console.log(
-            "✅ IMAGE LOADED"
-          );
-          console.log(
-            "URL:",
-            e.currentTarget.src
-          );
-        }}
         height="190"
         image={
           product.imageUrl
@@ -144,86 +136,181 @@ const ProductCard = ({
         }
         alt={product.name}
         sx={{
+          height: {
+            xs: 100,
+            sm: 130,
+            md: 190,
+          },
+
           transition: ".4s",
           objectFit: "cover",
         }}
       />
 
-      {/* ================================= */}
-      {/* PRODUCT INFORMATION */}
-      {/* ================================= */}
+      {/* PRODUCT INFO */}
 
       <CardContent
         sx={{
-          p: 1.5,
+          p: {
+            xs: 0.7,
+            sm: 1,
+            md: 1.5,
+          },
+
           "&:last-child": {
-            pb: 1.5,
+            pb: {
+              xs: 0.7,
+              sm: 1,
+              md: 1.5,
+            },
           },
         }}
       >
+
+        {/* CATEGORY */}
+
         <Chip
           label={product.category}
           color="primary"
           size="small"
           sx={{
-            mb: 1,
+            mb: {
+              xs: 0.5,
+              md: 1,
+            },
+
             fontWeight: "bold",
-            fontSize: "0.7rem",
+
+            fontSize: {
+              xs: "0.5rem",
+              sm: "0.6rem",
+              md: "0.7rem",
+            },
+
+            height: {
+              xs: 18,
+              sm: 22,
+              md: 28,
+            },
+
+            maxWidth: "100%",
           }}
         />
+
+        {/* NAME */}
 
         <Typography
           variant="subtitle1"
           fontWeight="bold"
           sx={{
-            fontSize: "0.95rem",
-            lineHeight: 1.3,
-            minHeight: 40,
+            fontSize: {
+              xs: "0.68rem",
+              sm: "0.8rem",
+              md: "0.95rem",
+            },
+
+            lineHeight: 1.2,
+
+            minHeight: {
+              xs: 32,
+              sm: 36,
+              md: 40,
+            },
+
+            display: "-webkit-box",
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: "vertical",
+            overflow: "hidden",
           }}
         >
           {product.name}
         </Typography>
 
+        {/* BRAND */}
+
         <Typography
           variant="body2"
           color="text.secondary"
           sx={{
-            minHeight: 22,
-            fontSize: "0.82rem",
+            minHeight: {
+              xs: 18,
+              md: 22,
+            },
+
+            fontSize: {
+              xs: "0.58rem",
+              sm: "0.7rem",
+              md: "0.82rem",
+            },
+
             fontWeight: 500,
+
             mb: 0.5,
+
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
           }}
         >
           {product.brand ||
             "Marque non disponible"}
         </Typography>
 
+        {/* PRICE */}
+
         <Typography
           variant="h6"
           color="primary"
           fontWeight="bold"
-          mt={1}
+          sx={{
+            fontSize: {
+              xs: "0.8rem",
+              sm: "0.95rem",
+              md: "1.25rem",
+            },
+
+            mt: {
+              xs: 0.5,
+              md: 1,
+            },
+          }}
         >
           {product.price} DT
         </Typography>
+
       </CardContent>
 
-      {/* ================================= */}
       {/* ACTIONS */}
-      {/* ================================= */}
 
       <CardActions
         sx={{
           display: "flex",
           justifyContent: "space-between",
-          px: 1.5,
-          pb: 1.5,
+
+          px: {
+            xs: 0.5,
+            sm: 1,
+            md: 1.5,
+          },
+
+          pb: {
+            xs: 0.6,
+            sm: 1,
+            md: 1.5,
+          },
+
           pt: 0,
         }}
       >
-        {/* ❤️ + 👁️ */}
 
-        <Box>
+        {/* FAVORITE + VIEW */}
+
+        <Box
+          sx={{
+            display: "flex",
+          }}
+        >
+
           <IconButton
             onClick={() =>
               toggleFavorite(product)
@@ -234,22 +321,36 @@ const ProductCard = ({
                 : "Ajouter aux favoris"
             }
             sx={{
-              transition: ".25s",
+              p: {
+                xs: 0.3,
+                sm: 0.6,
+                md: 1,
+              },
             }}
           >
             {isFavorite ? (
               <FavoriteIcon
                 sx={{
                   color: "#e53935",
-                  transform:
-                    "scale(1.3)",
-                  transition: ".3s",
+
+                  fontSize: {
+                    xs: 17,
+                    sm: 20,
+                    md: 24,
+                  },
                 }}
               />
             ) : (
               <FavoriteBorderIcon
                 sx={{
+                  fontSize: {
+                    xs: 17,
+                    sm: 20,
+                    md: 24,
+                  },
+
                   transition: ".3s",
+
                   "&:hover": {
                     color: "#e53935",
                   },
@@ -262,36 +363,67 @@ const ProductCard = ({
             onClick={() =>
               handleOpen(product)
             }
+            sx={{
+              p: {
+                xs: 0.3,
+                sm: 0.6,
+                md: 1,
+              },
+            }}
           >
-            <VisibilityIcon color="primary" />
+            <VisibilityIcon
+              color="primary"
+              sx={{
+                fontSize: {
+                  xs: 17,
+                  sm: 20,
+                  md: 24,
+                },
+              }}
+            />
           </IconButton>
+
         </Box>
 
-        {/* ================================= */}
         {/* STOCK */}
-        {/* ================================= */}
 
         {product.quantite === 0 && (
           <Chip
-            label="Rupture de stock"
+            label="Rupture"
             color="error"
             sx={{
-              mt: 2,
-              width: "100%",
+              fontSize: {
+                xs: "0.45rem",
+                sm: "0.6rem",
+                md: "0.75rem",
+              },
+
+              height: {
+                xs: 18,
+                sm: 22,
+                md: 30,
+              },
+
               fontWeight: "bold",
             }}
           />
         )}
 
-        {/* ================================= */}
-        {/* AJOUTER AU PANIER */}
-        {/* ================================= */}
+        {/* ADD TO CART */}
 
         <Button
           variant="contained"
           size="small"
           startIcon={
-            <ShoppingCartIcon />
+            <ShoppingCartIcon
+              sx={{
+                fontSize: {
+                  xs: "13px !important",
+                  sm: "16px !important",
+                  md: "20px !important",
+                },
+              }}
+            />
           }
           onClick={handleAdd}
           disabled={
@@ -300,9 +432,26 @@ const ProductCard = ({
           sx={{
             borderRadius: 2,
             textTransform: "none",
-            fontSize: "0.75rem",
+
+            fontSize: {
+              xs: "0.5rem",
+              sm: "0.65rem",
+              md: "0.75rem",
+            },
+
             minWidth: "auto",
-            px: 1.5,
+
+            px: {
+              xs: 0.6,
+              sm: 1,
+              md: 1.5,
+            },
+
+            py: {
+              xs: 0.4,
+              sm: 0.6,
+              md: 0.8,
+            },
 
             transform: added
               ? "scale(1.08)"
@@ -312,9 +461,10 @@ const ProductCard = ({
           }}
         >
           {added
-            ? "Ajouté ✓"
+            ? "✓"
             : "Ajouter"}
         </Button>
+
       </CardActions>
     </Card>
   );
