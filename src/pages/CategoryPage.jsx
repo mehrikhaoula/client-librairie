@@ -1,19 +1,51 @@
-import React, { useContext, useEffect, useMemo, useState,} from "react";
+import React, {
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+
 import {
-  Box, Button, CircularProgress, Container, Dialog, DialogContent,
-  DialogTitle, Divider, IconButton, MenuItem, Select, Typography,
+  Box,
+  Button,
+  CircularProgress,
+  Container,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  Divider,
+  IconButton,
+  MenuItem,
+  Select,
+  Typography,
 } from "@mui/material";
-import { useNavigate, useParams, useLocation } from "react-router-dom";
+
+import {
+  useNavigate,
+  useParams,
+  useLocation,
+} from "react-router-dom";
+
 import axios from "axios";
 
 import CloseIcon from "@mui/icons-material/Close";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+
 import ProductCard from "../components/ProductCard";
-import { FavoritesContext,} from "../context/FavoritesContext";
-import { CartContext,} from "../context/CartContext";
+
+import {
+  FavoritesContext,
+} from "../context/FavoritesContext";
+
+import {
+  CartContext,
+} from "../context/CartContext";
+
 import { endpoint } from "../utils/config";
+
 import CategoryNavigation from "../components/CategoryNavigation";
+
 
 // =====================================================
 // CATEGORY CONFIG
@@ -22,14 +54,14 @@ import CategoryNavigation from "../components/CategoryNavigation";
 const CATEGORY_CONFIG = {
 
   "beaux-arts": {
-  name: "BEAUX-ARTS",
-  title: "L'art commence ici.",
-  description:
-    "Peinture, dessin et matériel artistique pour donner vie à vos idées.",
-  image: "/beaux-art.jpg",
-  accent: "#C9785A",
-  soft: "#F4E1D8",
-},
+    name: "BEAUX-ARTS",
+    title: "L'art commence ici.",
+    description:
+      "Peinture, dessin et matériel artistique pour donner vie à vos idées.",
+    image: "/beaux-art.jpg",
+    accent: "#C9785A",
+    soft: "#F4E1D8",
+  },
 
   "loisirs-creatifs": {
     name: "LOISIRS CRÉATIFS",
@@ -102,6 +134,7 @@ const CategoryPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+
   // ===================================================
   // CONTEXT
   // ===================================================
@@ -172,8 +205,8 @@ const CategoryPage = () => {
         setLoading(true);
 
         const response = await axios.get(
-  endpoint.getAllProduit
-);
+          endpoint.getAllProduit
+        );
 
         setProducts(
           response.data.data || []
@@ -198,21 +231,30 @@ const CategoryPage = () => {
 
   }, []);
 
-    // ===================================================
+
+  // ===================================================
   // CATEGORY CHANGE ANIMATION + RESET
   // ===================================================
 
   useEffect(() => {
+
     setVisibleCount(24);
+
     setSort("default");
+
     setOpen(false);
+
     setSelectedProduct(null);
 
     window.scrollTo({
       top: 0,
       behavior: "smooth",
     });
-  }, [category, location.pathname]);
+
+  }, [
+    category,
+    location.pathname,
+  ]);
 
 
   // ===================================================
@@ -339,7 +381,6 @@ const CategoryPage = () => {
   if (!config) {
 
     return (
-      
 
       <Container
         sx={{
@@ -373,6 +414,8 @@ const CategoryPage = () => {
     );
 
   }
+
+
   // ===================================================
   // PAGE
   // ===================================================
@@ -381,460 +424,599 @@ const CategoryPage = () => {
 
     <Box
       sx={{
-        background: "#FAF8F4",
+        position: "relative",
+        overflow: "hidden",
+
         minHeight: "100vh",
+
+        /*
+         * 🎨 BACKGROUND GLOBAL
+         * Même esprit que HomeCategorySection
+         */
+        background: `
+          radial-gradient(
+            circle at 95% 5%,
+            ${config.soft} 0%,
+            transparent 35%
+          ),
+
+          radial-gradient(
+            circle at 5% 35%,
+            ${config.soft} 0%,
+            transparent 30%
+          ),
+
+          radial-gradient(
+            circle at 90% 90%,
+            ${config.soft} 0%,
+            transparent 32%
+          ),
+
+          linear-gradient(
+            135deg,
+            #ffffff 0%,
+            ${config.soft} 50%,
+            #ffffff 100%
+          )
+        `,
       }}
     >
-      <CategoryNavigation />
 
-{/* =================================================
-        CATEGORY PAGE CONTENT
-    ================================================= */}
-
-    <Box
-      key={location.pathname}
-      sx={{
-        animation: "categorySlideIn .45s ease-out",
-
-        "@keyframes categorySlideIn": {
-          "0%": {
-            opacity: 0,
-            transform: "translateX(45px)",
-          },
-
-          "60%": {
-            opacity: 0.8,
-            transform: "translateX(-4px)",
-          },
-
-          "100%": {
-            opacity: 1,
-            transform: "translateX(0)",
-          },
-        },
-      }}
-    >
 
       {/* =================================================
-          CATEGORY INTRO
+          🎨 ARTISTIC BACKGROUND SHAPES
       ================================================= */}
 
-      <Container
-        maxWidth="xl"
-        sx={{
-          pt: {
-            xs: 2,
-            md: 3,
-          },
-          pb: {
-            xs: 2.5,
-            md: 3,
-          },
-        }}
->
-
-        {/* BREADCRUMB */}
-
-{/* <Box
-  sx={{
-    display: "flex",
-    alignItems: "center",
-    gap: 0.5,
-
-    mb: {
-      xs: 0.5,
-      md: 0.5,
-    },
-  }}
->
-  <Button
-    startIcon={<ArrowBackIcon />}
-    onClick={() => navigate("/")}
-    sx={{
-      minWidth: "auto",
-      color: "#243447",
-      fontSize: ".8rem",
-      fontWeight: 600,
-      px: 0,
-      py:0,
-
-      "&:hover": {
-        background: "transparent",
-        color: config.accent,
-      },
-    }}
-  >
-    Accueil
-  </Button>
-
-  <Typography
-    sx={{
-      color: "#aaa",
-      fontSize: ".8rem",
-    }}
-  >
-    /
-  </Typography>
-
-  <Typography
-    sx={{
-      color: config.accent,
-      fontSize: ".8rem",
-      fontWeight: 600,
-    }}
-  >
-    {config.name}
-  </Typography>
-</Box> */}
-
-        {/* =================================================
-    CATEGORY HERO
-================================================= */}
-
-<Box
-  sx={{
-    position: "relative",
-    height: {
-      xs: 260,
-      sm: 300,
-      md: 340,
-    },
-    borderRadius: {
-      xs: 2.5,
-      md: 4,
-    },
-    overflow: "hidden",
-    backgroundImage: `url("${config.image}")`,
-    backgroundSize: "cover",
-    backgroundPosition: "center",
-    boxShadow: "0 12px 35px rgba(36,52,71,.12)",
-  }}
->
-
-  {/* OVERLAY */}
-
-  <Box
-    sx={{
-      position: "absolute",
-      inset: 0,
-      background:
-        "linear-gradient(90deg, rgba(20,28,35,.72) 0%, rgba(20,28,35,.48) 45%, rgba(20,28,35,.25) 100%)",
-    }}
-  />
-
-
-  {/* TEXT */}
-
-  <Box
-    sx={{
-      position: "relative",
-      zIndex: 2,
-      height: "100%",
-      display: "flex",
-      flexDirection: "column",
-      justifyContent: "center",
-      alignItems: "center",
-      textAlign: "center",
-      px: {
-        xs: 3,
-        sm: 5,
-      },
-      color: "#fff",
-    }}
-  >
-
-    {/* CATEGORY */}
-
-    <Typography
-      sx={{
-        fontWeight: 700,
-        letterSpacing: {
-          xs: 2,
-          md: 3,
-        },
-        fontSize: {
-          xs: ".75rem",
-          md: ".9rem",
-        },
-        mb: 1,
-        textTransform: "uppercase",
-      }}
-    >
-      {config.name}
-    </Typography>
-
-
-    {/* TITLE */}
-
-    <Typography
-      sx={{
-        fontFamily: "Georgia, serif",
-        fontWeight: 600,
-        fontSize: {
-          xs: "2rem",
-          sm: "2.5rem",
-          md: "3.3rem",
-        },
-        lineHeight: 1.1,
-        mb: 1.5,
-        textShadow:
-          "0 3px 15px rgba(0,0,0,.25)",
-      }}
-    >
-      {config.title}
-    </Typography>
-
-
-    {/* DESCRIPTION */}
-
-    <Typography
-      sx={{
-        maxWidth: 650,
-        fontSize: {
-          xs: ".82rem",
-          sm: ".9rem",
-          md: "1rem",
-        },
-        lineHeight: 1.6,
-        color: "rgba(255,255,255,.92)",
-        textShadow:
-          "0 2px 8px rgba(0,0,0,.3)",
-      }}
-    >
-      {config.description}
-    </Typography>
-
-
-    {/* PRODUCTS COUNT */}
-
-    <Box
-      sx={{
-        mt: 2,
-        px: 2,
-        py: .65,
-        borderRadius: 10,
-        background: "rgba(255,255,255,.92)",
-        color: config.accent,
-        fontSize: ".75rem",
-        fontWeight: 700,
-        backdropFilter: "blur(6px)",
-      }}
-    >
-      {categoryProducts.length} produits
-    </Box>
-
-  </Box>
-
-</Box>
-
-      </Container>
-      {/* =================================================
-          PRODUCTS
-      ================================================= */}
       <Box
         sx={{
-          background: "#fff",
-          borderTop:
-            "1px solid #EEE9E1",
+          position: "absolute",
+
+          width: 280,
+          height: 280,
+
+          borderRadius:
+            "45% 55% 60% 40%",
+
+          background: `
+            linear-gradient(
+              135deg,
+              ${config.accent},
+              ${config.soft}
+            )
+          `,
+
+          opacity: 0.10,
+
+          top: -100,
+          left: -80,
+
+          transform:
+            "rotate(-25deg)",
+
+          filter: "blur(2px)",
+
+          pointerEvents: "none",
+        }}
+      />
+
+
+      <Box
+        sx={{
+          position: "absolute",
+
+          width: 330,
+          height: 330,
+
+          borderRadius:
+            "60% 40% 35% 65%",
+
+          background: `
+            linear-gradient(
+              135deg,
+              ${config.accent},
+              ${config.soft}
+            )
+          `,
+
+          opacity: 0.08,
+
+          top: 40,
+          right: -150,
+
+          transform:
+            "rotate(25deg)",
+
+          filter: "blur(1px)",
+
+          pointerEvents: "none",
+        }}
+      />
+
+
+      <Box
+        sx={{
+          position: "absolute",
+
+          width: 240,
+          height: 240,
+
+          borderRadius:
+            "55% 45% 65% 35%",
+
+          background: `
+            linear-gradient(
+              135deg,
+              ${config.soft},
+              ${config.accent}
+            )
+          `,
+
+          opacity: 0.09,
+
+          bottom: 180,
+          left: "25%",
+
+          transform:
+            "rotate(35deg)",
+
+          filter: "blur(2px)",
+
+          pointerEvents: "none",
+        }}
+      />
+
+
+      <Box
+        sx={{
+          position: "absolute",
+
+          width: 180,
+          height: 180,
+
+          borderRadius:
+            "40% 60% 55% 45%",
+
+          background: `
+            linear-gradient(
+              135deg,
+              ${config.accent},
+              ${config.soft}
+            )
+          `,
+
+          opacity: 0.08,
+
+          bottom: 30,
+          right: "8%",
+
+          transform:
+            "rotate(-20deg)",
+
+          pointerEvents: "none",
+        }}
+      />
+
+
+      {/* =================================================
+          CATEGORY NAVIGATION
+      ================================================= */}
+
+      <Box
+        sx={{
+          position: "relative",
+          zIndex: 5,
         }}
       >
+        <CategoryNavigation />
+      </Box>
+
+
+      {/* =================================================
+          CATEGORY PAGE CONTENT
+      ================================================= */}
+
+      <Box
+        key={location.pathname}
+        sx={{
+          position: "relative",
+          zIndex: 1,
+
+          animation:
+            "categorySlideIn .45s ease-out",
+
+          "@keyframes categorySlideIn": {
+
+            "0%": {
+              opacity: 0,
+              transform:
+                "translateX(45px)",
+            },
+
+            "60%": {
+              opacity: 0.8,
+              transform:
+                "translateX(-4px)",
+            },
+
+            "100%": {
+              opacity: 1,
+              transform:
+                "translateX(0)",
+            },
+
+          },
+        }}
+      >
+
+
+        {/* =================================================
+            CATEGORY INTRO
+        ================================================= */}
+
         <Container
           maxWidth="xl"
           sx={{
-            py: {
-              xs: 4,
-              md: 6,
+            pt: {
+              xs: 2,
+              md: 3,
+            },
+
+            pb: {
+              xs: 2.5,
+              md: 3,
             },
           }}
         >
 
 
-          {/* PRODUCTS HEADER */}
+          {/* =================================================
+              CATEGORY HERO
+          ================================================= */}
 
           <Box
             sx={{
-              display: "flex",
-              alignItems: {
-                xs: "flex-start",
-                md: "center",
+              position: "relative",
+
+              height: {
+                xs: 260,
+                sm: 300,
+                md: 340,
               },
 
-              justifyContent:
-                "space-between",
-              flexDirection: {
-                xs: "column",
-                md: "row",
+              borderRadius: {
+                xs: 2.5,
+                md: 4,
               },
-              gap: 2,
-              mb: 4,
+
+              overflow: "hidden",
+
+              backgroundImage:
+                `url("${config.image}")`,
+
+              backgroundSize:
+                "cover",
+
+              backgroundPosition:
+                "center",
+
+              boxShadow:
+                "0 12px 35px rgba(36,52,71,.12)",
             }}
           >
 
-            <Box>
-              <Typography
-                sx={{
-                  color: "#243447",
-                  fontWeight: 700,
-                  fontSize: {
-                    xs: "1.4rem",
-                    md: "1.8rem",
-                  },
-                }}
-              >
-                Notre sélection
-              </Typography>
 
-              <Typography
-                sx={{
-                  color: "#89929A",
-                  fontSize: ".85rem",
-                  mt: .5,
-                }}
-              >
-                Découvrez nos produits
-              </Typography>
-            </Box>
+            {/* OVERLAY */}
 
-
-            {/* SORT */}
-
-            <Select
-              value={sort}
-              onChange={(e) =>
-                setSort(e.target.value)
-              }
-              size="small"
-              IconComponent={
-                KeyboardArrowDownIcon
-              }
+            <Box
               sx={{
-                minWidth: 190,
-                borderRadius: 2,
+                position:
+                  "absolute",
+
+                inset: 0,
+
                 background:
-                  "#FAF8F4",
-                "& fieldset": {
-                  borderColor:
-                    "#E6DED3",
+                  "linear-gradient(90deg, rgba(20,28,35,.72) 0%, rgba(20,28,35,.48) 45%, rgba(20,28,35,.25) 100%)",
+              }}
+            />
+
+
+            {/* TEXT */}
+
+            <Box
+              sx={{
+                position:
+                  "relative",
+
+                zIndex: 2,
+
+                height: "100%",
+
+                display: "flex",
+
+                flexDirection:
+                  "column",
+
+                justifyContent:
+                  "center",
+
+                alignItems:
+                  "center",
+
+                textAlign: "center",
+
+                px: {
+                  xs: 3,
+                  sm: 5,
                 },
-                "&:hover fieldset": {
-                  borderColor:
-                    config.accent,
-                },
+
+                color: "#fff",
               }}
             >
 
-              <MenuItem value="default">
-                Trier par
-              </MenuItem>
 
-              <MenuItem value="price-asc">
-                Prix : croissant
-              </MenuItem>
+              {/* CATEGORY */}
 
-              <MenuItem value="price-desc">
-                Prix : décroissant
-              </MenuItem>
+              <Typography
+                sx={{
+                  fontWeight: 700,
 
-              <MenuItem value="name">
-                Nom
-              </MenuItem>
-            </Select>
+                  letterSpacing: {
+                    xs: 2,
+                    md: 3,
+                  },
+
+                  fontSize: {
+                    xs: ".75rem",
+                    md: ".9rem",
+                  },
+
+                  mb: 1,
+
+                  textTransform:
+                    "uppercase",
+                }}
+              >
+                {config.name}
+              </Typography>
+
+
+              {/* TITLE */}
+
+              <Typography
+                sx={{
+                  fontFamily:
+                    "Georgia, serif",
+
+                  fontWeight: 600,
+
+                  fontSize: {
+                    xs: "2rem",
+                    sm: "2.5rem",
+                    md: "3.3rem",
+                  },
+
+                  lineHeight: 1.1,
+
+                  mb: 1.5,
+
+                  textShadow:
+                    "0 3px 15px rgba(0,0,0,.25)",
+                }}
+              >
+                {config.title}
+              </Typography>
+
+
+              {/* DESCRIPTION */}
+
+              <Typography
+                sx={{
+                  maxWidth: 650,
+
+                  fontSize: {
+                    xs: ".82rem",
+                    sm: ".9rem",
+                    md: "1rem",
+                  },
+
+                  lineHeight: 1.6,
+
+                  color:
+                    "rgba(255,255,255,.92)",
+
+                  textShadow:
+                    "0 2px 8px rgba(0,0,0,.3)",
+                }}
+              >
+                {config.description}
+              </Typography>
+
+
+              {/* PRODUCTS COUNT */}
+
+              <Box
+                sx={{
+                  mt: 2,
+
+                  px: 2,
+
+                  py: 0.65,
+
+                  borderRadius: 10,
+
+                  background:
+                    "rgba(255,255,255,.92)",
+
+                  color:
+                    config.accent,
+
+                  fontSize: ".75rem",
+
+                  fontWeight: 700,
+
+                  backdropFilter:
+                    "blur(6px)",
+                }}
+              >
+                {categoryProducts.length} produits
+              </Box>
+
+            </Box>
+
           </Box>
 
-          {/* LOADING */}
+        </Container>
 
-          {loading && (
+
+        {/* =================================================
+            PRODUCTS
+        ================================================= */}
+
+        <Box
+          sx={{
+            position: "relative",
+
+            /*
+             * مهم:
+             * موش #fff باش background
+             * artistique يبقى ظاهر.
+             */
+            background:
+              "rgba(255,255,255,0.62)",
+
+            backdropFilter:
+              "blur(2px)",
+
+            borderTop:
+              "1px solid rgba(238,233,225,.7)",
+          }}
+        >
+
+          <Container
+            maxWidth="xl"
+            sx={{
+              py: {
+                xs: 4,
+                md: 6,
+              },
+            }}
+          >
+
+
+            {/* PRODUCTS HEADER */}
+
             <Box
               sx={{
                 display: "flex",
+
+                alignItems: {
+                  xs: "flex-start",
+                  md: "center",
+                },
+
                 justifyContent:
-                  "center",
-                py: 10,
+                  "space-between",
+
+                flexDirection: {
+                  xs: "column",
+                  md: "row",
+                },
+
+                gap: 2,
+
+                mb: 4,
               }}
             >
-              <CircularProgress
-                sx={{
-                  color:
-                    config.accent,
-                }}
-              />
-            </Box>
-          )}
 
-          {/* EMPTY */}
+              <Box>
 
-          {!loading &&
-            categoryProducts.length === 0 && (
-              <Box
-                sx={{
-                  textAlign: "center",
-                  py: 10,
-                  background:
-                    "#FAF8F4",
-                  borderRadius: 3,
-                }}
-              >
                 <Typography
-                  color="text.secondary"
+                  sx={{
+                    color: "#243447",
+
+                    fontWeight: 700,
+
+                    fontSize: {
+                      xs: "1.4rem",
+                      md: "1.8rem",
+                    },
+                  }}
                 >
-                  Aucun produit disponible
-                  dans cette catégorie.
+                  Notre sélection
+                </Typography>
+
+                <Typography
+                  sx={{
+                    color: "#89929A",
+
+                    fontSize: ".85rem",
+
+                    mt: 0.5,
+                  }}
+                >
+                  Découvrez nos produits
                 </Typography>
 
               </Box>
 
-            )}
 
+              {/* SORT */}
 
-          {/* PRODUCT GRID */}
-
-          {!loading &&
-            visibleProducts.length > 0 && (
-
-              <Box
+              <Select
+                value={sort}
+                onChange={(e) =>
+                  setSort(
+                    e.target.value
+                  )
+                }
+                size="small"
+                IconComponent={
+                  KeyboardArrowDownIcon
+                }
                 sx={{
-                  display: "grid",
-                  gridTemplateColumns: {
-                    xs: "repeat(2, minmax(0, 1fr))",
-                    sm: "repeat(3, minmax(0, 1fr))",
-                    md: "repeat(4, minmax(0, 1fr))",
+                  minWidth: 190,
+
+                  borderRadius: 2,
+
+                  background:
+                    "rgba(255,255,255,.88)",
+
+                  "& fieldset": {
+                    borderColor:
+                      "#E6DED3",
                   },
 
-                  gap: {
-                    xs: 1.5,
-                    sm: 2,
-                    md: 2.5,
+                  "&:hover fieldset": {
+                    borderColor:
+                      config.accent,
                   },
                 }}
               >
 
-                {visibleProducts.map(
-                  (product) => (
+                <MenuItem value="default">
+                  Trier par
+                </MenuItem>
 
-                    <ProductCard
-                      key={product._id}
-                      product={product}
-                      favorites={favorites}
-                      toggleFavorite={
-                        toggleFavorite
-                      }
-                      handleOpen={
-                        handleOpen
-                      }
-                    />
-                  )
-                )}
+                <MenuItem value="price-asc">
+                  Prix : croissant
+                </MenuItem>
 
-              </Box>
+                <MenuItem value="price-desc">
+                  Prix : décroissant
+                </MenuItem>
 
-            )}
+                <MenuItem value="name">
+                  Nom
+                </MenuItem>
+
+              </Select>
+
+            </Box>
 
 
-          {/* LOAD MORE */}
+            {/* LOADING */}
 
-          {!loading &&
-            visibleCount <
-              categoryProducts.length && (
+            {loading && (
 
               <Box
                 sx={{
@@ -843,49 +1025,173 @@ const CategoryPage = () => {
                   justifyContent:
                     "center",
 
-                  mt: 5,
+                  py: 10,
                 }}
               >
 
-                <Button
-                  variant="outlined"
-                  onClick={
-                    handleLoadMore
-                  }
+                <CircularProgress
                   sx={{
-                    px: 4,
-
-                    py: 1.2,
-
-                    borderRadius: 10,
-
-                    borderColor:
-                      config.accent,
-
                     color:
                       config.accent,
-
-                    fontWeight: 600,
-
-                    "&:hover": {
-                      borderColor:
-                        config.accent,
-
-                      background:
-                        config.soft,
-                    },
                   }}
-                >
-                  Charger plus
-                </Button>
+                />
 
               </Box>
 
             )}
 
-        </Container>
 
-      </Box>
+            {/* EMPTY */}
+
+            {!loading &&
+              categoryProducts.length === 0 && (
+
+                <Box
+                  sx={{
+                    textAlign:
+                      "center",
+
+                    py: 10,
+
+                    background:
+                      "rgba(250,248,244,.75)",
+
+                    borderRadius: 3,
+                  }}
+                >
+
+                  <Typography
+                    color="text.secondary"
+                  >
+                    Aucun produit disponible
+                    dans cette catégorie.
+                  </Typography>
+
+                </Box>
+
+              )}
+
+
+            {/* PRODUCT GRID */}
+
+            {!loading &&
+              visibleProducts.length > 0 && (
+
+                <Box
+                  sx={{
+                    display: "grid",
+
+                    gridTemplateColumns: {
+                      xs:
+                        "repeat(2, minmax(0, 1fr))",
+
+                      sm:
+                        "repeat(3, minmax(0, 1fr))",
+
+                      md:
+                        "repeat(4, minmax(0, 1fr))",
+                    },
+
+                    gap: {
+                      xs: 1.5,
+                      sm: 2,
+                      md: 2.5,
+                    },
+                  }}
+                >
+
+                  {visibleProducts.map(
+                    (product) => (
+
+                      <ProductCard
+                        key={
+                          product._id
+                        }
+
+                        product={
+                          product
+                        }
+
+                        favorites={
+                          favorites
+                        }
+
+                        toggleFavorite={
+                          toggleFavorite
+                        }
+
+                        handleOpen={
+                          handleOpen
+                        }
+                      />
+
+                    )
+                  )}
+
+                </Box>
+
+              )}
+
+
+            {/* LOAD MORE */}
+
+            {!loading &&
+              visibleCount <
+                categoryProducts.length && (
+
+                <Box
+                  sx={{
+                    display: "flex",
+
+                    justifyContent:
+                      "center",
+
+                    mt: 5,
+                  }}
+                >
+
+                  <Button
+                    variant="outlined"
+
+                    onClick={
+                      handleLoadMore
+                    }
+
+                    sx={{
+                      px: 4,
+
+                      py: 1.2,
+
+                      borderRadius: 10,
+
+                      borderColor:
+                        config.accent,
+
+                      color:
+                        config.accent,
+
+                      fontWeight: 600,
+
+                      "&:hover": {
+                        borderColor:
+                          config.accent,
+
+                        background:
+                          config.soft,
+                      },
+                    }}
+                  >
+                    Charger plus
+                  </Button>
+
+                </Box>
+
+              )}
+
+          </Container>
+
+        </Box>
+
       </Box>
 
 
@@ -906,9 +1212,11 @@ const CategoryPage = () => {
 
             <DialogTitle
               sx={{
-                fontWeight: "bold",
+                fontWeight:
+                  "bold",
 
-                color: "#243447",
+                color:
+                  "#243447",
 
                 pr: 6,
 
@@ -917,7 +1225,9 @@ const CategoryPage = () => {
               }}
             >
 
-              {selectedProduct.name}
+              {
+                selectedProduct.name
+              }
 
               <IconButton
                 onClick={
@@ -931,7 +1241,8 @@ const CategoryPage = () => {
 
                   top: 10,
 
-                  color: "#243447",
+                  color:
+                    "#243447",
 
                   "&:hover": {
                     background:
@@ -978,6 +1289,7 @@ const CategoryPage = () => {
 
                   <Box
                     component="img"
+
                     src={
                       selectedProduct.imageUrl
                         ? endpoint.imageReadProduit(
@@ -985,9 +1297,11 @@ const CategoryPage = () => {
                           )
                         : "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=600"
                     }
+
                     alt={
                       selectedProduct.name
                     }
+
                     sx={{
                       width: "100%",
 
@@ -1024,9 +1338,12 @@ const CategoryPage = () => {
 
                     <Typography
                       color="text.secondary"
+
                       sx={{
                         mt: 1,
-                        fontWeight: 500,
+
+                        fontWeight:
+                          500,
                       }}
                     >
                       Marque :{" "}
@@ -1040,6 +1357,7 @@ const CategoryPage = () => {
 
                   <Typography
                     color="text.secondary"
+
                     sx={{
                       mt: 3,
 
@@ -1063,6 +1381,7 @@ const CategoryPage = () => {
                   <Typography
                     variant="h5"
                     fontWeight="bold"
+
                     sx={{
                       color:
                         config.accent,
@@ -1108,13 +1427,16 @@ const CategoryPage = () => {
                     fullWidth
                     variant="contained"
                     size="large"
+
                     startIcon={
                       <ShoppingCartIcon />
                     }
+
                     disabled={
                       selectedProduct.quantite ===
                       0
                     }
+
                     onClick={() => {
 
                       addToCart(
@@ -1124,6 +1446,7 @@ const CategoryPage = () => {
                       handleClose();
 
                     }}
+
                     sx={{
                       mt: 4,
 
@@ -1135,6 +1458,7 @@ const CategoryPage = () => {
                       "&:hover": {
                         background:
                           config.accent,
+
                         filter:
                           "brightness(.9)",
                       },
@@ -1146,7 +1470,7 @@ const CategoryPage = () => {
                 </Box>
 
               </Box>
-              
+
             </DialogContent>
 
           </>

@@ -22,6 +22,7 @@ import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { CartContext } from "../context/CartContext";
 import { FavoritesContext } from "../context/FavoritesContext";
+import Contact from "../pages/Contact";
 
 const Navbar = () => {
   const { cart } = useContext(CartContext);
@@ -32,6 +33,8 @@ const Navbar = () => {
 
   const navigate = useNavigate();
   const location = useLocation();
+
+  const [contactOpen, setContactOpen] = useState(false);
 
   const theme = useTheme();
 
@@ -79,11 +82,12 @@ const Navbar = () => {
     },
     {
       label: "Contact",
-      path: "/contact",
+      action: "contact",
     },
   ];
 
   return (
+    <>
     <AppBar
       position="sticky"
       elevation={2}
@@ -222,6 +226,25 @@ const Navbar = () => {
           }}
         >
           {menuItems.map((item) => {
+            
+            if (item.action === "contact") {
+  return (
+    <Typography
+      key={item.label}
+      onClick={() => setContactOpen(true)}
+      sx={{
+        cursor: "pointer",
+        color: "#444",
+        fontWeight: 500,
+        "&:hover": {
+          color: "#1565C0",
+        },
+      }}
+    >
+      {item.label}
+    </Typography>
+);
+}
 
             if (item.action === "products") {
               return (
@@ -587,7 +610,13 @@ const Navbar = () => {
         </Box>
       </Toolbar>
     </AppBar>
-  );
+
+    <Contact
+  open={contactOpen}
+  onClose={() => setContactOpen(false)}
+/>
+</>
+);
 };
 
 export default Navbar;

@@ -141,15 +141,58 @@ console.log("🔥 ALL PRODUCTS :", allProducts);
     <>
       {/* SECTION */}
       <Box
-        sx={{
-          background: "#FAF8F4",
-          py: {
-            xs: 4,
-            md: 6,
-          },
-        }}
-      >
-        <Container maxWidth="xl">
+  sx={{
+    position: "relative",
+    overflow: "hidden",
+
+    background: `
+      radial-gradient(
+        circle at 95% 5%,
+        ${soft} 0%,
+        transparent 35%
+      ),
+      radial-gradient(
+        circle at 5% 95%,
+        ${soft} 0%,
+        transparent 30%
+      ),
+      linear-gradient(
+        135deg,
+        #ffffff 0%,
+        ${soft} 50%,
+        #ffffff 100%
+      )
+    `,
+
+    py: {
+      xs: 4,
+      md: 6,
+    },
+
+    borderTop: "1px solid rgba(0,0,0,0.03)",
+  }}
+>
+  <Box
+  sx={{
+    position: "absolute",
+    width: 220,
+    height: 220,
+    borderRadius: "45% 55% 60% 40%",
+    background: accent,
+    opacity: 0.045,
+    top: -100,
+    right: -60,
+    transform: "rotate(25deg)",
+    pointerEvents: "none",
+  }}
+/>
+        <Container
+  maxWidth="xl"
+  sx={{
+    position: "relative",
+    zIndex: 1,
+  }}
+>
 
           {/* HEADER */}
           <Box
