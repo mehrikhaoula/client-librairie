@@ -14,12 +14,13 @@ import CloseIcon from "@mui/icons-material/Close";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
-
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { endpoint } from "../utils/config";
 import { useAuth } from "../context/AuthContext";
 
 const UserLogin = ({ open, onClose, onSuccess }) => {
+  const navigate = useNavigate();
   const { login } = useAuth();
 
   const [data, setData] = useState({
@@ -563,32 +564,32 @@ const UserLogin = ({ open, onClose, onSuccess }) => {
           </Typography>
 
           <Button
-            type="button"
-            onClick={() => {
-              onClose?.();
+  type="button"
+  onClick={() => {
+    onClose?.();
 
-              // On garde ton système de route actuel.
-              window.location.href = "/register";
-            }}
-            sx={{
-              padding: 0,
-              minWidth: "auto",
+    navigate("/register", {
+      state: {
+        fromLogin: true,
+      },
+    });
+  }}
+  sx={{
+    padding: 0,
+    minWidth: "auto",
+    textTransform: "none",
+    fontSize: "14px",
+    fontWeight: 700,
+    color: "#8a6a45",
 
-              textTransform: "none",
-
-              fontSize: "14px",
-              fontWeight: 700,
-
-              color: "#8a6a45",
-
-              "&:hover": {
-                background: "transparent",
-                color: "#6f5335",
-              },
-            }}
-          >
-            Créer un compte
-          </Button>
+    "&:hover": {
+      background: "transparent",
+      color: "#6f5335",
+    },
+  }}
+>
+  Créer un compte
+</Button>
         </Box>
 
         {/* ===================================================

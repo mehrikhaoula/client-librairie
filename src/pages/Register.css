@@ -584,6 +584,44 @@
   font-size: 11px;
 }
 
+.password-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-input-wrapper input {
+  width: 100%;
+  padding-right: 48px;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: none;
+  background: transparent;
+  color: #64748b;
+
+  cursor: pointer;
+  padding: 5px;
+
+  transition: color 0.2s ease;
+}
+
+.password-toggle:hover {
+  color: #8a6a45;
+}
+
+.password-toggle svg {
+  font-size: 21px;
+}
 
 /* =====================================================
    RESPONSIVE
@@ -636,4 +674,5 @@
   .register-small-dot {
     display: none;
   }
+
 }

@@ -25,7 +25,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 import {
   useNavigate,
-  Link,
+  Link, useLocation,
 } from "react-router-dom";
 
 import { CartContext } from "../context/CartContext";
@@ -50,12 +50,24 @@ const Cart = () => {
   } = useAuth();
 
   const navigate = useNavigate();
+  const location = useLocation();
 
   // =====================================================
   // LOGIN MODAL
   // =====================================================
 
   const [loginOpen, setLoginOpen] = useState(false);
+  React.useEffect(() => {
+  if (location.state?.fromLogin) {
+    setLoginOpen(true);
+
+    // نمسح الـstate باش refresh ما يعاودش يفتح Login
+    navigate("/cart", {
+      replace: true,
+      state: {},
+    });
+  }
+}, [location, navigate]);
 
   // =====================================================
   // DELETE DIALOG

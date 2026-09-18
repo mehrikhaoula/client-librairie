@@ -1,14 +1,19 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { endpoint } from "../utils/config";
 import "./Register.css";
+import { useAuth } from "../context/AuthContext";
+import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
+import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
+
 
 const Register = () => {
   const navigate = useNavigate();
-
+  
+  const { login, checkAuth } = useAuth();
   const [data, setData] = useState({
     firstname: "",
     lastname: "",
@@ -19,7 +24,9 @@ const Register = () => {
   });
 
   const [loading, setLoading] = useState(false);
-
+  
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -86,12 +93,29 @@ const Register = () => {
       );
 
       if (response.status === 201) {
-        toast.success("Compte créé avec succès 🎉");
+  toast.success("Compte créé avec succès 🎉");
 
-        setTimeout(() => {
-          navigate("/login");
-        }, 1200);
-      }
+  // ==========================================
+  // CONNECTER L'UTILISATEUR DANS AUTH CONTEXT
+  // ==========================================
+
+  if (response.data?.user) {
+    login(response.data.user);
+  } else {
+    // Si le backend crée bien la session/cookie
+    // mais ne renvoie pas user dans la réponse
+    await checkAuth();
+  }
+
+  // ==========================================
+  // RETOUR AU PANIER
+  // ==========================================
+
+  setTimeout(() => {
+    navigate("/cart");
+  }, 1200);
+}
+
     } catch (error) {
       console.error("REGISTER ERROR:", error);
 
@@ -254,37 +278,84 @@ const Register = () => {
 
           {/* PASSWORD */}
 
-          <div className="register-field">
+<div className="register-field">
 
-            <label>Mot de passe</label>
+  <label>Mot de passe</label>
 
-            <input
-              type="password"
-              name="password"
-              value={data.password}
-              onChange={handleChange}
-              placeholder="Minimum 6 caractères"
-              autoComplete="new-password"
-            />
+  <div className="password-input-wrapper">
 
-          </div>
+    <input
+      type={showPassword ? "text" : "password"}
+      name="password"
+      value={data.password}
+      onChange={handleChange}
+      placeholder="Minimum 6 caractères"
+      autoComplete="new-password"
+    />
 
-          {/* CONFIRM PASSWORD */}
+    <button
+      type="button"
+      className="password-toggle"
+      onClick={() =>
+        setShowPassword((prev) => !prev)
+      }
+      aria-label={
+        showPassword
+          ? "Masquer le mot de passe"
+          : "Afficher le mot de passe"
+      }
+    >
+      {showPassword ? (
+        <VisibilityOffOutlinedIcon />
+      ) : (
+        <VisibilityOutlinedIcon />
+      )}
+    </button>
 
-          <div className="register-field">
+  </div>
 
-            <label>Confirmer le mot de passe</label>
+</div>
 
-            <input
-              type="password"
-              name="confirmPassword"
-              value={data.confirmPassword}
-              onChange={handleChange}
-              placeholder="Confirmez votre mot de passe"
-              autoComplete="new-password"
-            />
 
-          </div>
+{/* CONFIRM PASSWORD */}
+
+<div className="register-field">
+
+  <label>Confirmer le mot de passe</label>
+
+  <div className="password-input-wrapper">
+
+    <input
+      type={showConfirmPassword ? "text" : "password"}
+      name="confirmPassword"
+      value={data.confirmPassword}
+      onChange={handleChange}
+      placeholder="Confirmez votre mot de passe"
+      autoComplete="new-password"
+    />
+
+    <button
+      type="button"
+      className="password-toggle"
+      onClick={() =>
+        setShowConfirmPassword((prev) => !prev)
+      }
+      aria-label={
+        showConfirmPassword
+          ? "Masquer la confirmation"
+          : "Afficher la confirmation"
+      }
+    >
+      {showConfirmPassword ? (
+        <VisibilityOffOutlinedIcon />
+      ) : (
+        <VisibilityOutlinedIcon />
+      )}
+    </button>
+
+  </div>
+
+</div>
 
           {/* BUTTON */}
 
@@ -308,7 +379,7 @@ const Register = () => {
 
           <button
             type="button"
-            onClick={() => navigate("/login")}
+            onClick={() => window.history.back()}
           >
             Se connecter
           </button>
