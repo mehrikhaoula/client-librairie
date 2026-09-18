@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { endpoint } from "../utils/config";
+import "./Register.css";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -19,10 +20,6 @@ const Register = () => {
 
   const [loading, setLoading] = useState(false);
 
-  // ============================
-  // CHANGE INPUT
-  // ============================
-
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -32,20 +29,12 @@ const Register = () => {
     }));
   };
 
-  // ============================
-  // REGISTER
-  // ============================
-
   const handleRegister = async (e) => {
     e.preventDefault();
 
-    // ============================
-    // Vérifications
-    // ============================
-
     if (
-      !data.firstname ||
-      !data.lastname ||
+      !data.firstname.trim() ||
+      !data.lastname.trim() ||
       !data.password ||
       !data.confirmPassword
     ) {
@@ -53,7 +42,7 @@ const Register = () => {
       return;
     }
 
-    if (!data.email && !data.phone) {
+    if (!data.email.trim() && !data.phone.trim()) {
       toast.error(
         "Veuillez saisir un email ou un numéro de téléphone."
       );
@@ -80,10 +69,10 @@ const Register = () => {
         {
           firstname: data.firstname.trim(),
           lastname: data.lastname.trim(),
-          email: data.email
+          email: data.email.trim()
             ? data.email.trim().toLowerCase()
             : undefined,
-          phone: data.phone
+          phone: data.phone.trim()
             ? data.phone.trim()
             : undefined,
           password: data.password,
@@ -92,19 +81,17 @@ const Register = () => {
           headers: {
             "Content-Type": "application/json",
           },
+          withCredentials: true,
         }
       );
 
       if (response.status === 201) {
-        toast.success(
-          "Compte créé avec succès 🎉"
-        );
+        toast.success("Compte créé avec succès 🎉");
 
         setTimeout(() => {
           navigate("/login");
         }, 1200);
       }
-
     } catch (error) {
       console.error("REGISTER ERROR:", error);
 
@@ -112,219 +99,226 @@ const Register = () => {
         error.response?.data?.message ||
           "Erreur lors de la création du compte."
       );
-
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-400 via-slate-200 to-blue-950 px-4 py-10">
+    <div className="register-page">
 
       <ToastContainer position="top-center" />
 
-      <div className="w-full max-w-md">
+      {/* DECORATIONS */}
 
-        <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-7 sm:p-9">
+      <div className="register-circle circle-one"></div>
+      <div className="register-circle circle-two"></div>
+      <div className="register-circle circle-three"></div>
+      <div className="register-circle circle-four"></div>
 
-          {/* LOGO */}
+      <div className="register-small-dot dot-one"></div>
+      <div className="register-small-dot dot-two"></div>
+      <div className="register-small-dot dot-three"></div>
 
-          <div className="flex justify-center mb-5">
+      {/* CARD */}
+
+      <div className="register-card">
+
+        {/* TOP LINE */}
+
+        <div className="register-top-line"></div>
+
+        {/* LOGO */}
+
+        <div className="register-logo-wrapper">
+
+          <div className="register-logo-glow"></div>
+
+          <div className="register-logo">
             <img
               src="/logo.png"
               alt="Librairie Benzarti"
-              className="w-28 h-28 object-contain"
             />
           </div>
 
-          {/* TITLE */}
+        </div>
 
-          <div className="text-center mb-7">
+        {/* TITLE */}
 
-            <h1 className="text-3xl font-bold text-blue-950">
-              Créer un compte
-            </h1>
+        <div className="register-header">
 
-            <p className="text-gray-500 mt-2">
-              Rejoignez Librairie Benzarti
-            </p>
+          <span className="register-badge">
+            📚 Librairie Benzarti
+          </span>
+
+          <h1>Créer un compte</h1>
+
+          <p>
+            Rejoignez notre communauté et profitez
+            pleinement de votre expérience.
+          </p>
+
+        </div>
+
+        {/* FORM */}
+
+        <form
+          onSubmit={handleRegister}
+          className="register-form"
+        >
+
+          {/* FIRST / LAST NAME */}
+
+          <div className="register-row">
+
+            <div className="register-field">
+              <label>Prénom</label>
+
+              <input
+                type="text"
+                name="firstname"
+                value={data.firstname}
+                onChange={handleChange}
+                placeholder="Votre prénom"
+                autoComplete="given-name"
+              />
+            </div>
+
+            <div className="register-field">
+              <label>Nom</label>
+
+              <input
+                type="text"
+                name="lastname"
+                value={data.lastname}
+                onChange={handleChange}
+                placeholder="Votre nom"
+                autoComplete="family-name"
+              />
+            </div>
 
           </div>
 
-          {/* FORM */}
+          {/* EMAIL */}
 
-          <form
-            onSubmit={handleRegister}
-            className="flex flex-col gap-4"
-          >
+          <div className="register-field">
 
-            {/* NOM / PRENOM */}
+            <label>
+              Email
+              <span> (optionnel)</span>
+            </label>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <input
+              type="email"
+              name="email"
+              value={data.email}
+              onChange={handleChange}
+              placeholder="exemple@gmail.com"
+              autoComplete="email"
+            />
 
-              <div className="flex flex-col gap-2">
+          </div>
 
-                <label className="text-gray-700 font-semibold">
-                  Prénom
-                </label>
+          {/* PHONE */}
 
-                <input
-                  type="text"
-                  name="firstname"
-                  value={data.firstname}
-                  onChange={handleChange}
-                  placeholder="Votre prénom"
-                  autoComplete="given-name"
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-700 focus:border-transparent transition"
-                />
+          <div className="register-field">
 
-              </div>
+            <label>
+              Téléphone
+              <span> (optionnel)</span>
+            </label>
 
-              <div className="flex flex-col gap-2">
+            <input
+              type="tel"
+              name="phone"
+              value={data.phone}
+              onChange={handleChange}
+              placeholder="+216 XX XXX XXX"
+              autoComplete="tel"
+            />
 
-                <label className="text-gray-700 font-semibold">
-                  Nom
-                </label>
+          </div>
 
-                <input
-                  type="text"
-                  name="lastname"
-                  value={data.lastname}
-                  onChange={handleChange}
-                  placeholder="Votre nom"
-                  autoComplete="family-name"
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-700 focus:border-transparent transition"
-                />
+          {/* INFO */}
 
-              </div>
+          <div className="register-info">
 
-            </div>
+            <div className="info-icon">i</div>
 
-            {/* EMAIL */}
-
-            <div className="flex flex-col gap-2">
-
-              <label className="text-gray-700 font-semibold">
-                Email
-                <span className="text-gray-400 font-normal ml-1">
-                  (optionnel)
-                </span>
-              </label>
-
-              <input
-                type="email"
-                name="email"
-                value={data.email}
-                onChange={handleChange}
-                placeholder="exemple@gmail.com"
-                autoComplete="email"
-                className="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-700 focus:border-transparent transition"
-              />
-
-            </div>
-
-            {/* TELEPHONE */}
-
-            <div className="flex flex-col gap-2">
-
-              <label className="text-gray-700 font-semibold">
-                Téléphone
-                <span className="text-gray-400 font-normal ml-1">
-                  (optionnel)
-                </span>
-              </label>
-
-              <input
-                type="tel"
-                name="phone"
-                value={data.phone}
-                onChange={handleChange}
-                placeholder="+216 XX XXX XXX"
-                autoComplete="tel"
-                className="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-700 focus:border-transparent transition"
-              />
-
-            </div>
-
-            {/* INFO */}
-
-            <p className="text-xs text-gray-500">
-              * Vous devez renseigner au moins un email
+            <p>
+              Vous devez renseigner au moins un email
               ou un numéro de téléphone.
             </p>
 
-            {/* PASSWORD */}
+          </div>
 
-            <div className="flex flex-col gap-2">
+          {/* PASSWORD */}
 
-              <label className="text-gray-700 font-semibold">
-                Mot de passe
-              </label>
+          <div className="register-field">
 
-              <input
-                type="password"
-                name="password"
-                value={data.password}
-                onChange={handleChange}
-                placeholder="Minimum 6 caractères"
-                autoComplete="new-password"
-                className="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-700 focus:border-transparent transition"
-              />
+            <label>Mot de passe</label>
 
-            </div>
-
-            {/* CONFIRM PASSWORD */}
-
-            <div className="flex flex-col gap-2">
-
-              <label className="text-gray-700 font-semibold">
-                Confirmer le mot de passe
-              </label>
-
-              <input
-                type="password"
-                name="confirmPassword"
-                value={data.confirmPassword}
-                onChange={handleChange}
-                placeholder="Confirmez votre mot de passe"
-                autoComplete="new-password"
-                className="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-700 focus:border-transparent transition"
-              />
-
-            </div>
-
-            {/* REGISTER BUTTON */}
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-gradient-to-r from-slate-500 to-blue-950 hover:from-slate-600 hover:to-blue-900 disabled:opacity-60 text-white font-semibold py-3.5 rounded-xl transition duration-300 shadow-md mt-2"
-            >
-              {loading
-                ? "Création du compte..."
-                : "Créer mon compte"}
-            </button>
-
-          </form>
-
-          {/* LOGIN */}
-
-          <div className="text-center mt-7 pt-6 border-t border-gray-200">
-
-            <span className="text-gray-600">
-              Vous avez déjà un compte ?
-            </span>
-
-            <button
-              type="button"
-              onClick={() => navigate("/login")}
-              className="text-blue-800 font-semibold hover:underline ml-1"
-            >
-              Se connecter
-            </button>
+            <input
+              type="password"
+              name="password"
+              value={data.password}
+              onChange={handleChange}
+              placeholder="Minimum 6 caractères"
+              autoComplete="new-password"
+            />
 
           </div>
 
+          {/* CONFIRM PASSWORD */}
+
+          <div className="register-field">
+
+            <label>Confirmer le mot de passe</label>
+
+            <input
+              type="password"
+              name="confirmPassword"
+              value={data.confirmPassword}
+              onChange={handleChange}
+              placeholder="Confirmez votre mot de passe"
+              autoComplete="new-password"
+            />
+
+          </div>
+
+          {/* BUTTON */}
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="register-button"
+          >
+            {loading
+              ? "Création du compte..."
+              : "Créer mon compte"}
+          </button>
+
+        </form>
+
+        {/* LOGIN */}
+
+        <div className="register-login">
+
+          <p>Vous avez déjà un compte ?</p>
+
+          <button
+            type="button"
+            onClick={() => navigate("/login")}
+          >
+            Se connecter
+          </button>
+
+        </div>
+
+        {/* FOOTER */}
+
+        <div className="register-footer">
+          © {new Date().getFullYear()} Librairie Benzarti
         </div>
 
       </div>

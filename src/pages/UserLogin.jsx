@@ -1,17 +1,25 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate, useLocation } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import {
+  Box,
+  Button,
+  IconButton,
+  TextField,
+  Typography,
+  CircularProgress,
+  InputAdornment,
+} from "@mui/material";
+
+import CloseIcon from "@mui/icons-material/Close";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
+import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
+
+import { toast } from "react-toastify";
 import { endpoint } from "../utils/config";
 import { useAuth } from "../context/AuthContext";
 
-
-const UserLogin = () => {
-  
-  const navigate = useNavigate();
-  const location = useLocation();
-
+const UserLogin = ({ open, onClose, onSuccess }) => {
   const { login } = useAuth();
 
   const [data, setData] = useState({
@@ -20,10 +28,47 @@ const UserLogin = () => {
   });
 
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
-  // ============================
-  // CHANGE INPUT
-  // ============================
+  // =========================================================
+  // BLOQUER LE SCROLL QUAND LE MODAL EST OUVERT
+  // =========================================================
+
+  useEffect(() => {
+    if (!open) return;
+
+    const originalOverflow = document.body.style.overflow;
+
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = originalOverflow;
+    };
+  }, [open]);
+
+  // =========================================================
+  // FERMER AVEC ESC
+  // =========================================================
+
+  useEffect(() => {
+    if (!open) return;
+
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") {
+        onClose?.();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [open, onClose]);
+
+  // =========================================================
+  // CHANGEMENT DES CHAMPS
+  // =========================================================
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -34,255 +79,545 @@ const UserLogin = () => {
     }));
   };
 
-  // ============================
+  // =========================================================
   // LOGIN
-  // ============================
+  // =========================================================
 
- const handleLogin = async (e) => {
-  e.preventDefault();
+  const handleLogin = async (e) => {
+    e.preventDefault();
 
-  if (!data.identifier || !data.password) {
-    toast.error("Veuillez remplir tous les champs.");
-    return;
-  }
+    if (!data.identifier.trim() || !data.password) {
+      toast.error("Veuillez remplir tous les champs.");
+      return;
+    }
 
-  try {
-    setLoading(true);
+    try {
+      setLoading(true);
 
-    const response = await axios.post(
-      endpoint.userLogin,
-      data,
-      {
-        withCredentials: true,
+      const response = await axios.post(
+        endpoint.userLogin,
+        {
+          identifier: data.identifier.trim(),
+          password: data.password,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+
+      console.log("LOGIN SUCCESS:", response.data);
+
+      if (response.status === 200) {
+        // =====================================================
+        // METTRE À JOUR AUTH CONTEXT
+        // =====================================================
+
+        login(response.data.user);
+
+        // =====================================================
+        // GARDER L'UTILISATEUR EN LOCALSTORAGE
+        // =====================================================
+
+        localStorage.setItem(
+          "user",
+          JSON.stringify(response.data.user)
+        );
+
+        toast.success("Connexion réussie !");
+
+        // =====================================================
+        // FERMER LE MODAL
+        // =====================================================
+
+        setTimeout(() => {
+          setData({
+            identifier: "",
+            password: "",
+          });
+
+          setShowPassword(false);
+
+          onClose?.();
+
+          // Permet à Cart / MesCommandes de continuer
+          // l'action qui était bloquée par le login.
+          onSuccess?.(response.data.user);
+        }, 500);
       }
-    );
+    } catch (error) {
+      console.error("USER LOGIN ERROR:", error);
 
-    console.log("LOGIN SUCCESS:", response.data);
-
-    if (response.status === 200) {
-
-  login(response.data.user);
-
-  localStorage.setItem(
-    "user",
-    JSON.stringify(response.data.user)
-  );
-
-  toast.success("Connexion réussie !");
-
-  setTimeout(() => {
-
-    const from =
-      location.state?.from || "/";
-
-    navigate(from, {
-      replace: true,
-    });
-
-  }, 700);
-}
-
-  } catch (error) {
-    console.error("USER LOGIN ERROR:", error);
-
-    toast.error(
-      error.response?.data?.message ||
-      "Identifiants incorrects."
-    );
-  } finally {
-    setLoading(false);
-  }
-};
-
-  // ============================
-  // GOOGLE LOGIN
-  // ============================
-
-  const handleGoogleLogin = () => {
-    window.location.href = endpoint.googleLogin;
+      toast.error(
+        error.response?.data?.message ||
+          "Identifiants incorrects."
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
+  // =========================================================
+  // NE RIEN AFFICHER SI FERMÉ
+  // =========================================================
+
+  if (!open) return null;
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-400 via-slate-200 to-blue-950 px-4 py-10">
+    <Box
+      onClick={onClose}
+      sx={{
+        position: "fixed",
+        inset: 0,
+        zIndex: 9999,
 
-      <ToastContainer position="top-center" />
+        display: "flex",
+        alignItems: {
+          xs: "flex-end",
+          sm: "center",
+        },
+        justifyContent: "center",
 
-      <div className="w-full max-w-md">
+        backgroundColor: "rgba(15, 23, 42, 0.55)",
 
-        {/* CARD */}
+        backdropFilter: "blur(7px)",
+        WebkitBackdropFilter: "blur(7px)",
 
-        <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-7 sm:p-9">
+        animation: "loginFadeIn 0.25s ease",
 
-          {/* LOGO */}
+        "@keyframes loginFadeIn": {
+          from: {
+            opacity: 0,
+          },
+          to: {
+            opacity: 1,
+          },
+        },
+      }}
+    >
+      {/* =====================================================
+          CARD LOGIN
+      ===================================================== */}
 
-          <div className="flex justify-center mb-5">
-            <img
-              src="/logo.png"
-              alt="Librairie Benzarti"
-              className="w-28 h-28 object-contain"
-            />
-          </div>
+      <Box
+        onClick={(e) => e.stopPropagation()}
+        sx={{
+          position: "relative",
 
-          {/* TITLE */}
+          width: {
+            xs: "100%",
+            sm: "430px",
+          },
 
-          <div className="text-center mb-7">
+          maxWidth: {
+            xs: "100%",
+            sm: "calc(100% - 32px)",
+          },
 
-            <h1 className="text-3xl font-bold text-blue-950">
-              Bienvenue 👋
-            </h1>
+          maxHeight: {
+            xs: "92vh",
+            sm: "90vh",
+          },
 
-            <p className="text-gray-500 mt-2">
-              Connectez-vous à votre compte
-            </p>
+          overflowY: "auto",
 
-          </div>
+          background: "#ffffff",
 
-          {/* GOOGLE */}
+          borderRadius: {
+            xs: "28px 28px 0 0",
+            sm: "28px",
+          },
 
-          <button
-            type="button"
-            onClick={handleGoogleLogin}
-            className="w-full flex items-center justify-center gap-3 border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 font-semibold py-3 rounded-xl transition duration-200 shadow-sm"
+          boxShadow:
+            "0 25px 70px rgba(15, 23, 42, 0.30), 0 8px 25px rgba(15, 23, 42, 0.15)",
+
+          padding: {
+            xs: "28px 22px 24px",
+            sm: "38px 38px 32px",
+          },
+
+          animation: {
+            xs: "loginSlideMobile 0.3s ease",
+            sm: "loginSlideDesktop 0.3s ease",
+          },
+
+          "@keyframes loginSlideMobile": {
+            from: {
+              transform: "translateY(100%)",
+              opacity: 0,
+            },
+            to: {
+              transform: "translateY(0)",
+              opacity: 1,
+            },
+          },
+
+          "@keyframes loginSlideDesktop": {
+            from: {
+              transform: "translateY(25px) scale(0.97)",
+              opacity: 0,
+            },
+            to: {
+              transform: "translateY(0) scale(1)",
+              opacity: 1,
+            },
+          },
+        }}
+      >
+        {/* ===================================================
+            CLOSE
+        =================================================== */}
+
+        <IconButton
+          onClick={onClose}
+          aria-label="Fermer"
+          sx={{
+            position: "absolute",
+            top: 12,
+            right: 12,
+
+            width: 38,
+            height: 38,
+
+            color: "#64748b",
+
+            backgroundColor: "#f8fafc",
+
+            "&:hover": {
+              backgroundColor: "#f1f5f9",
+              color: "#0f172a",
+            },
+          }}
+        >
+          <CloseIcon fontSize="small" />
+        </IconButton>
+
+        {/* ===================================================
+            LOGO / ICON
+        =================================================== */}
+
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            mb: 2,
+          }}
+        >
+          <Box
+            sx={{
+              width: 62,
+              height: 62,
+
+              borderRadius: "20px",
+
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+
+              background:
+                "linear-gradient(135deg, #f5efe6 0%, #eadfce 100%)",
+
+              color: "#8a6a45",
+
+              boxShadow:
+                "0 8px 20px rgba(138, 106, 69, 0.12)",
+            }}
           >
+            <LockOutlinedIcon sx={{ fontSize: 28 }} />
+          </Box>
+        </Box>
 
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-            >
-              <path
-                fill="#4285F4"
-                d="M21.35 12.27c0-.79-.07-1.55-.23-2.27H12v4.3h5.23a4.47 4.47 0 0 1-1.94 2.94v2.45h3.14c1.84-1.69 2.92-4.18 2.92-7.42z"
-              />
-              <path
-                fill="#34A853"
-                d="M12 21.5c2.63 0 4.84-.87 6.45-2.35l-3.14-2.45c-.87.58-1.98.93-3.31.93-2.54 0-4.7-1.72-5.47-4.03H3.29v2.53A9.75 9.75 0 0 0 12 21.5z"
-              />
-              <path
-                fill="#FBBC05"
-                d="M6.53 13.6A5.86 5.86 0 0 1 6.22 12c0-.56.1-1.1.31-1.6V7.87H3.29A9.75 9.75 0 0 0 2.25 12c0 1.57.38 3.05 1.04 4.13l3.24-2.53z"
-              />
-              <path
-                fill="#EA4335"
-                d="M12 6.37c1.43 0 2.71.49 3.72 1.45l2.79-2.79C16.84 3.42 14.63 2.5 12 2.5a9.75 9.75 0 0 0-8.71 5.37l3.24 2.53C7.3 8.09 9.46 6.37 12 6.37z"
-              />
-            </svg>
+        {/* ===================================================
+            TITRE
+        =================================================== */}
 
-            Continuer avec Google
+        <Typography
+          sx={{
+            textAlign: "center",
+            fontSize: {
+              xs: "25px",
+              sm: "28px",
+            },
+            fontWeight: 700,
+            color: "#1e293b",
+            mb: 0.7,
+          }}
+        >
+          Bon retour 👋
+        </Typography>
 
-          </button>
+        <Typography
+          sx={{
+            textAlign: "center",
+            color: "#64748b",
+            fontSize: "14px",
+            lineHeight: 1.6,
+            mb: 3,
+          }}
+        >
+          Connectez-vous à votre compte pour continuer.
+        </Typography>
 
-          {/* SEPARATOR */}
+        {/* ===================================================
+            FORM
+        =================================================== */}
 
-          <div className="flex items-center gap-3 my-6">
+        <Box
+          component="form"
+          onSubmit={handleLogin}
+        >
+          {/* IDENTIFIANT */}
 
-            <div className="flex-1 h-px bg-gray-200" />
+          <TextField
+            fullWidth
+            name="identifier"
+            label="Email ou téléphone"
+            value={data.identifier}
+            onChange={handleChange}
+            autoComplete="username"
+            disabled={loading}
+            sx={{
+              mb: 2,
 
-            <span className="text-sm text-gray-400">
-              ou
-            </span>
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "14px",
+                backgroundColor: "#fafafa",
 
-            <div className="flex-1 h-px bg-gray-200" />
+                "& fieldset": {
+                  borderColor: "#e2e8f0",
+                },
 
-          </div>
+                "&:hover fieldset": {
+                  borderColor: "#cbd5e1",
+                },
 
-          {/* FORM */}
+                "&.Mui-focused fieldset": {
+                  borderColor: "#a88962",
+                  borderWidth: "1px",
+                },
+              },
 
-          <form
-            onSubmit={handleLogin}
-            className="flex flex-col gap-5"
+              "& .MuiInputLabel-root.Mui-focused": {
+                color: "#8a6a45",
+              },
+            }}
+          />
+
+          {/* PASSWORD */}
+
+          <TextField
+            fullWidth
+            name="password"
+            label="Mot de passe"
+            type={showPassword ? "text" : "password"}
+            value={data.password}
+            onChange={handleChange}
+            autoComplete="current-password"
+            disabled={loading}
+            sx={{
+              mb: 1,
+
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "14px",
+                backgroundColor: "#fafafa",
+
+                "& fieldset": {
+                  borderColor: "#e2e8f0",
+                },
+
+                "&:hover fieldset": {
+                  borderColor: "#cbd5e1",
+                },
+
+                "&.Mui-focused fieldset": {
+                  borderColor: "#a88962",
+                  borderWidth: "1px",
+                },
+              },
+
+              "& .MuiInputLabel-root.Mui-focused": {
+                color: "#8a6a45",
+              },
+            }}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={() =>
+                      setShowPassword((prev) => !prev)
+                    }
+                    edge="end"
+                    disabled={loading}
+                    sx={{
+                      color: "#64748b",
+                    }}
+                  >
+                    {showPassword ? (
+                      <VisibilityOffOutlinedIcon />
+                    ) : (
+                      <VisibilityOutlinedIcon />
+                    )}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+          />
+
+          {/* MOT DE PASSE OUBLIÉ */}
+
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "flex-end",
+              mb: 2.5,
+            }}
           >
-
-            {/* EMAIL / PHONE */}
-
-            <div className="flex flex-col gap-2">
-
-              <label className="text-gray-700 font-semibold">
-                Email ou numéro de téléphone
-              </label>
-
-              <input
-                type="text"
-                name="identifier"
-                value={data.identifier}
-                onChange={handleChange}
-                placeholder="Email ou +216 XX XXX XXX"
-                autoComplete="username"
-                className="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-700 focus:border-transparent transition"
-              />
-
-            </div>
-
-            {/* PASSWORD */}
-
-            <div className="flex flex-col gap-2">
-
-              <label className="text-gray-700 font-semibold">
-                Mot de passe
-              </label>
-
-              <input
-                type="password"
-                name="password"
-                value={data.password}
-                onChange={handleChange}
-                placeholder="Votre mot de passe"
-                autoComplete="current-password"
-                className="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-700 focus:border-transparent transition"
-              />
-
-            </div>
-
-            {/* FORGOT PASSWORD */}
-
-            <div className="text-right">
-
-              <button
-                type="button"
-                className="text-sm text-blue-700 hover:underline"
-              >
-                Mot de passe oublié ?
-              </button>
-
-            </div>
-
-            {/* LOGIN */}
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-gradient-to-r from-slate-500 to-blue-950 hover:from-slate-600 hover:to-blue-900 disabled:opacity-60 text-white font-semibold py-3.5 rounded-xl transition duration-300 shadow-md"
-            >
-              {loading
-                ? "Connexion..."
-                : "Se connecter"}
-            </button>
-
-          </form>
-
-          {/* REGISTER */}
-
-          <div className="text-center mt-7 pt-6 border-t border-gray-200">
-
-            <span className="text-gray-600">
-              Vous n'avez pas de compte ?
-            </span>
-
-            <button
+            <Button
               type="button"
-              onClick={() => navigate("/register")}
-              className="text-blue-800 font-semibold hover:underline ml-1"
+              variant="text"
+              sx={{
+                textTransform: "none",
+                fontSize: "13px",
+                color: "#8a6a45",
+                minWidth: "auto",
+                padding: "4px 0",
+
+                "&:hover": {
+                  background: "transparent",
+                  color: "#6f5335",
+                },
+              }}
             >
-              Créer un compte
-            </button>
+              Mot de passe oublié ?
+            </Button>
+          </Box>
 
-          </div>
+          {/* LOGIN */}
 
-        </div>
+          <Button
+            type="submit"
+            fullWidth
+            disabled={loading}
+            sx={{
+              height: 52,
 
-      </div>
+              borderRadius: "14px",
 
-    </div>
+              textTransform: "none",
+
+              fontSize: "15px",
+              fontWeight: 700,
+
+              color: "#ffffff",
+
+              background:
+                "linear-gradient(135deg, #9a7b52 0%, #7d603d 100%)",
+
+              boxShadow:
+                "0 10px 24px rgba(125, 96, 61, 0.25)",
+
+              "&:hover": {
+                background:
+                  "linear-gradient(135deg, #8c6d47 0%, #6f5335 100%)",
+
+                boxShadow:
+                  "0 12px 28px rgba(125, 96, 61, 0.32)",
+              },
+
+              "&:disabled": {
+                color: "#ffffff",
+                opacity: 0.7,
+              },
+            }}
+          >
+            {loading ? (
+              <CircularProgress
+                size={23}
+                sx={{
+                  color: "#ffffff",
+                }}
+              />
+            ) : (
+              "Se connecter"
+            )}
+          </Button>
+        </Box>
+
+        {/* ===================================================
+            REGISTER
+        =================================================== */}
+
+        <Box
+          sx={{
+            mt: 2.5,
+            textAlign: "center",
+          }}
+        >
+          <Typography
+            component="span"
+            sx={{
+              fontSize: "14px",
+              color: "#64748b",
+            }}
+          >
+            Vous n'avez pas encore de compte ?{" "}
+          </Typography>
+
+          <Button
+            type="button"
+            onClick={() => {
+              onClose?.();
+
+              // On garde ton système de route actuel.
+              window.location.href = "/register";
+            }}
+            sx={{
+              padding: 0,
+              minWidth: "auto",
+
+              textTransform: "none",
+
+              fontSize: "14px",
+              fontWeight: 700,
+
+              color: "#8a6a45",
+
+              "&:hover": {
+                background: "transparent",
+                color: "#6f5335",
+              },
+            }}
+          >
+            Créer un compte
+          </Button>
+        </Box>
+
+        {/* ===================================================
+            PETIT INDICATEUR MOBILE
+        =================================================== */}
+
+        <Box
+          sx={{
+            display: {
+              xs: "block",
+              sm: "none",
+            },
+
+            width: 42,
+            height: 4,
+
+            borderRadius: 10,
+
+            backgroundColor: "#d1d5db",
+
+            position: "absolute",
+            top: 10,
+            left: "50%",
+
+            transform: "translateX(-50%)",
+          }}
+        />
+      </Box>
+    </Box>
   );
 };
 

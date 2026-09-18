@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, {useCallback, useEffect, useState } from "react";
 import axios from "axios";
 
 import {
@@ -16,102 +16,97 @@ import LockIcon from "@mui/icons-material/Lock";
 
 import { useNavigate } from "react-router-dom";
 import { endpoint } from "../utils/config";
+import UserLogin from "./UserLogin";
 
 const MesCommandes = () => {
   const navigate = useNavigate();
+  const [loginOpen, setLoginOpen] = useState(false);
 
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [connected, setConnected] = useState(false);
 
   // =====================================
-  // Récupérer les commandes
-  // =====================================
+// RÉCUPÉRER LES COMMANDES
+// =====================================
 
-  useEffect(() => {
-    const getMyOrders = async () => {
-      try {
-        setLoading(true);
+const fetchOrders = useCallback(async () => {
+  try {
+    setLoading(true);
 
-        console.log("🔐 Vérification commandes...");
-        console.log("🌐 URL:", endpoint.myOrders);
+    console.log("🔐 Vérification commandes...");
+    console.log("🌐 URL:", endpoint.myOrders);
 
-        const response = await axios.get(
-          endpoint.myOrders,
-          {
-            withCredentials: true,
-          }
-        );
-
-        console.log(
-          "✅ MY ORDERS STATUS:",
-          response.status
-        );
-
-        console.log(
-          "✅ MY ORDERS RESPONSE:",
-          response.data
-        );
-
-        setConnected(true);
-
-        setOrders(
-          response.data?.orders ||
-            response.data ||
-            []
-        );
-      } catch (error) {
-        console.error(
-          "❌ MES COMMANDES ERROR:",
-          error
-        );
-
-        if (axios.isAxiosError(error)) {
-          console.error(
-            "❌ STATUS:",
-            error.response?.status
-          );
-
-          console.error(
-            "❌ DATA:",
-            error.response?.data
-          );
-
-          console.error(
-            "❌ URL:",
-            error.config?.url
-          );
-        }
-
-        if (
-          axios.isAxiosError(error) &&
-          error.response?.status === 401
-        ) {
-          console.log(
-            "🚫 Non connecté → Login"
-          );
-
-          setConnected(false);
-
-          navigate("/login", {
-            state: {
-              from: "/mes-commandes",
-            },
-            replace: true,
-          });
-
-          return;
-        }
-
-        setConnected(true);
-        setOrders([]);
-      } finally {
-        setLoading(false);
+    const response = await axios.get(
+      endpoint.myOrders,
+      {
+        withCredentials: true,
       }
-    };
+    );
 
-    getMyOrders();
-  }, [navigate]);
+    console.log(
+      "✅ MY ORDERS STATUS:",
+      response.status
+    );
+
+    console.log(
+      "✅ MY ORDERS RESPONSE:",
+      response.data
+    );
+
+    setConnected(true);
+
+    setOrders(
+      response.data?.orders ||
+        response.data ||
+        []
+    );
+  } catch (error) {
+    console.error(
+      "❌ MES COMMANDES ERROR:",
+      error
+    );
+
+    if (axios.isAxiosError(error)) {
+      console.error(
+        "❌ STATUS:",
+        error.response?.status
+      );
+
+      console.error(
+        "❌ DATA:",
+        error.response?.data
+      );
+    }
+
+    if (
+      axios.isAxiosError(error) &&
+      error.response?.status === 401
+    ) {
+      console.log(
+        "🚫 Non connecté → Login"
+      );
+
+      setConnected(false);
+      setLoginOpen(true);
+
+      return;
+    }
+
+    setConnected(true);
+    setOrders([]);
+  } finally {
+    setLoading(false);
+  }
+}, []);
+
+// =====================================
+// CHARGEMENT INITIAL
+// =====================================
+
+useEffect(() => {
+  fetchOrders();
+}, [fetchOrders]);
 
   // =====================================
   // Vérifier le statut
@@ -188,9 +183,52 @@ const handleEditOrder = (order) => {
   // =====================================
 
   if (!connected) {
-    return null;
-  }
+  return (
+    <>
+      <Container
+        maxWidth="md"
+        sx={{
+          pt: 14,
+          pb: 8,
+          textAlign: "center",
+        }}
+      >
+        <Typography
+          variant="h5"
+          fontWeight="bold"
+          mb={2}
+        >
+          Connectez-vous pour voir vos commandes 🔐
+        </Typography>
 
+        <Typography
+          color="text.secondary"
+          mb={3}
+        >
+          Connectez-vous à votre compte pour consulter vos commandes.
+        </Typography>
+
+        <Button
+          variant="contained"
+          onClick={() => setLoginOpen(true)}
+          sx={{
+            textTransform: "none",
+            borderRadius: 2,
+            fontWeight: "bold",
+          }}
+        >
+          Se connecter
+        </Button>
+      </Container>
+
+      <UserLogin
+        open={loginOpen}
+        onClose={() => setLoginOpen(false)}
+        onSuccess={fetchOrders}
+      />
+    </>
+  );
+}
   // =====================================
   // Aucune commande
   // =====================================
@@ -243,6 +281,7 @@ const handleEditOrder = (order) => {
   // =====================================
 
   return (
+    <>
     <Container
       maxWidth="md"
       sx={{
@@ -502,6 +541,13 @@ const handleEditOrder = (order) => {
         );
       })}
     </Container>
+
+    <UserLogin
+  open={loginOpen}
+  onClose={() => setLoginOpen(false)}
+  onSuccess={fetchOrders}
+/>
+</>
   );
 };
 
