@@ -9,6 +9,10 @@ export const endpoint = {
   userRegister: `${API_BASE_URL}/user/register`,
   getMe: `${API_BASE_URL}/user/me`,
 
+  forgotPassword: `${API_BASE_URL}/user/forgot-password`,
+verifyResetCode: `${API_BASE_URL}/user/verify-reset-code`,
+resetPassword: `${API_BASE_URL}/user/reset-password`,
+
   // categorie
   getAllCategorie: `${API_BASE_URL}/categories`,
   addCategorie: `${API_BASE_URL}/categorie`,

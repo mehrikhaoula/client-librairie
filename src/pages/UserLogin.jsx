@@ -30,6 +30,7 @@ const UserLogin = ({ open, onClose, onSuccess }) => {
 
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [loginError, setLoginError] = useState("");
 
   // =========================================================
   // BLOQUER LE SCROLL QUAND LE MODAL EST OUVERT
@@ -78,6 +79,10 @@ const UserLogin = ({ open, onClose, onSuccess }) => {
       ...prev,
       [name]: value,
     }));
+    // Effacer le message d'erreur
+  if (loginError) {
+    setLoginError("");
+  }
   };
 
   // =========================================================
@@ -148,10 +153,7 @@ const UserLogin = ({ open, onClose, onSuccess }) => {
     } catch (error) {
       console.error("USER LOGIN ERROR:", error);
 
-      toast.error(
-        error.response?.data?.message ||
-          "Identifiants incorrects."
-      );
+      setLoginError("Email ou mot de passe incorrect");
     } finally {
       setLoading(false);
     }
@@ -473,24 +475,41 @@ const UserLogin = ({ open, onClose, onSuccess }) => {
             }}
           >
             <Button
-              type="button"
-              variant="text"
-              sx={{
-                textTransform: "none",
-                fontSize: "13px",
-                color: "#8a6a45",
-                minWidth: "auto",
-                padding: "4px 0",
-
-                "&:hover": {
-                  background: "transparent",
-                  color: "#6f5335",
-                },
-              }}
-            >
-              Mot de passe oublié ?
-            </Button>
+  type="button"
+  variant="text"
+  onClick={() => {
+    onClose?.();
+    navigate("/forgot-password");
+  }}
+  sx={{
+    textTransform: "none",
+    fontSize: "13px",
+    color: "#8a6a45",
+    minWidth: "auto",
+    padding: "4px 0",
+    "&:hover": {
+      background: "transparent",
+      color: "#6f5335",
+    },
+  }}
+>
+  Mot de passe oublié ?
+</Button>
           </Box>
+
+          {loginError && (
+  <Typography
+    sx={{
+      color: "#dc2626",
+      fontSize: "13px",
+      fontWeight: 500,
+      mt: -0.5,
+      mb: 2,
+    }}
+  >
+    {loginError}
+  </Typography>
+)}
 
           {/* LOGIN */}
 

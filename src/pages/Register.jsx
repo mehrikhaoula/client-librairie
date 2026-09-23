@@ -112,7 +112,7 @@ const Register = () => {
   // ==========================================
 
   setTimeout(() => {
-    navigate("/cart");
+    navigate("/checkout");
   }, 1200);
 }
 
@@ -374,17 +374,19 @@ const Register = () => {
         {/* LOGIN */}
 
         <div className="register-login">
+  <p>Vous avez déjà un compte ?</p>
 
-          <p>Vous avez déjà un compte ?</p>
-
-          <button
-            type="button"
-            onClick={() => window.history.back()}
-          >
-            Se connecter
-          </button>
-
-        </div>
+  <button
+    type="button"
+    onClick={() =>
+      navigate("/cart", {
+        state: { fromLogin: true },
+      })
+    }
+  >
+    Se connecter
+  </button>
+</div>
 
         {/* FOOTER */}
 

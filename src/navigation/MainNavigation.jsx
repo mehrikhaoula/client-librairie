@@ -19,6 +19,7 @@ import { AuthProvider } from "../context/AuthContext";
 import Favoris from "../pages/Favoris";
 import ModifierCommande from "../pages/ModifierCommande";
 import CategoryPage from "../pages/CategoryPage";
+import ForgotPassword from "../pages/ForgotPassword";
 
 const MainNavigation = () => {
   return (
@@ -89,6 +90,8 @@ const MainNavigation = () => {
             />
 
           </Route>
+          <Route path="/forgot-password" 
+          element={<ForgotPassword />} />
 
         </Routes>
         </FavoritesProvider>
