@@ -223,69 +223,183 @@ const MostOrderedSection = () => {
           </Box>
 
           {/* =================================
-              PRODUITS
-              SCROLL HORIZONTAL
-          ================================= */}
+    PRODUITS
+    SCROLL HORIZONTAL
+================================= */}
 
-          <Box
-            sx={{
-              display: "flex",
+<Box
+  sx={{
+    position: "relative",
+  }}
+>
+  {/* Flèche gauche */}
+  <Box
+    onClick={() => {
+      document
+        .getElementById("most-ordered-scroll")
+        ?.scrollBy({
+          left: -500,
+          behavior: "smooth",
+        });
+    }}
+    sx={{
+      display: {
+        xs: "none",
+        md: "flex",
+      },
 
-              gap: {
-                xs: 1.5,
-                sm: 2,
-                md: 2.5,
-              },
+      position: "absolute",
+      left: -18,
+      top: "50%",
+      transform: "translateY(-50%)",
 
-              // ⭐ SCROLL HORIZONTAL
-              overflowX: "auto",
+      width: 42,
+      height: 42,
 
-              // ⭐ Pas de retour à la ligne
-              flexWrap: "nowrap",
+      borderRadius: "50%",
 
-              // ⭐ Scroll fluide
-              scrollBehavior: "smooth",
+      backgroundColor: "#FFFFFF",
 
-              pb: 2,
+      boxShadow: "0 4px 14px rgba(36,52,71,0.18)",
 
-              // Cacher scrollbar
-              scrollbarWidth: "none",
+      alignItems: "center",
+      justifyContent: "center",
 
-              "&::-webkit-scrollbar": {
-                display: "none",
-              },
+      color: "#C9785A",
 
-              // =================================
-              // LARGEUR DES CARTES
-              // =================================
+      fontSize: "24px",
+      fontWeight: 700,
 
-              "& > *": {
-                flex: {
-                  xs: "0 0 72%",
-                  sm: "0 0 38%",
-                  md: "0 0 23%",
-                  lg: "0 0 23%",
-                },
+      cursor: "pointer",
 
-                minWidth: 0,
-              },
-            }}
-          >
-            {products.map((product) => (
-              <Box
-                key={product._id}
-              >
-                <ProductCard
-                  product={product}
-                  favorites={favorites}
-                  toggleFavorite={
-                    toggleFavorite
-                  }
-                  handleOpen={handleOpen}
-                />
-              </Box>
-            ))}
-          </Box>
+      zIndex: 5,
+
+      transition: "all .2s ease",
+
+      "&:hover": {
+        transform: "translateY(-50%) scale(1.08)",
+        boxShadow:
+          "0 6px 18px rgba(36,52,71,0.25)",
+      },
+    }}
+  >
+    ‹
+  </Box>
+
+  {/* Cartes */}
+  <Box
+    id="most-ordered-scroll"
+    sx={{
+      display: "flex",
+
+      gap: {
+        xs: 1.5,
+        sm: 2,
+        md: 2.5,
+      },
+
+      overflowX: "auto",
+
+      flexWrap: "nowrap",
+
+      scrollBehavior: "smooth",
+
+      pb: 2,
+
+      scrollbarWidth: "none",
+
+      "&::-webkit-scrollbar": {
+        display: "none",
+      },
+
+      // =================================
+      // LARGEUR DES CARTES
+      // =================================
+
+      "& > *": {
+        flex: {
+          xs: "0 0 72%",
+          sm: "0 0 38%",
+          md: "0 0 23%",
+          lg: "0 0 23%",
+        },
+
+        minWidth: 0,
+      },
+    }}
+  >
+    {products.map((product) => (
+      <Box
+        key={product._id}
+        sx={{
+          flexShrink: 0,
+        }}
+      >
+        <ProductCard
+          product={product}
+          favorites={favorites}
+          toggleFavorite={toggleFavorite}
+          handleOpen={handleOpen}
+        />
+      </Box>
+    ))}
+  </Box>
+
+  {/* Flèche droite */}
+  <Box
+    onClick={() => {
+      document
+        .getElementById("most-ordered-scroll")
+        ?.scrollBy({
+          left: 500,
+          behavior: "smooth",
+        });
+    }}
+    sx={{
+      display: {
+        xs: "none",
+        md: "flex",
+      },
+
+      position: "absolute",
+      right: -18,
+      top: "50%",
+      transform: "translateY(-50%)",
+
+      width: 42,
+      height: 42,
+
+      borderRadius: "50%",
+
+      backgroundColor: "#FFFFFF",
+
+      boxShadow:
+        "0 4px 14px rgba(36,52,71,0.18)",
+
+      alignItems: "center",
+      justifyContent: "center",
+
+      color: "#C9785A",
+
+      fontSize: "24px",
+      fontWeight: 700,
+
+      cursor: "pointer",
+
+      zIndex: 5,
+
+      transition: "all .2s ease",
+
+      "&:hover": {
+        transform: "translateY(-50%) scale(1.08)",
+        boxShadow:
+          "0 6px 18px rgba(36,52,71,0.25)",
+      },
+    }}
+  >
+    ›
+  </Box>
+</Box>
         </Container>
       </Box>
 
