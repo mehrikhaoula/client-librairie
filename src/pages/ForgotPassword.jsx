@@ -101,13 +101,12 @@ const ForgotPassword = () => {
         setStep(3);
       }
     } catch (error) {
-      console.error("FORGOT PASSWORD ERROR:", error);
-
-      toast.error(
-        error.response?.data?.message ||
-          "Une erreur est survenue."
-      );
-    } finally {
+  console.log("FORGOT PASSWORD ERROR:", error);
+  console.log("STATUS:", error.response?.status);
+  console.log("DATA:", error.response?.data);
+  console.log("MESSAGE:", error.response?.data?.message);
+}
+    finally {
       setLoading(false);
     }
   };

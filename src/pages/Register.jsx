@@ -95,21 +95,13 @@ const Register = () => {
       if (response.status === 201) {
   toast.success("Compte créé avec succès 🎉");
 
-  // ==========================================
-  // CONNECTER L'UTILISATEUR DANS AUTH CONTEXT
-  // ==========================================
-
+  // Le backend vient de créer la session
+  // On met à jour AuthContext + on vérifie réellement le cookie
   if (response.data?.user) {
     login(response.data.user);
-  } else {
-    // Si le backend crée bien la session/cookie
-    // mais ne renvoie pas user dans la réponse
-    await checkAuth();
   }
 
-  // ==========================================
-  // RETOUR AU PANIER
-  // ==========================================
+  await checkAuth();
 
   setTimeout(() => {
     navigate("/checkout");
