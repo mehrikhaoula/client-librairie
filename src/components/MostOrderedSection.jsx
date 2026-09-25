@@ -249,7 +249,7 @@ const MostOrderedSection = () => {
       },
 
       position: "absolute",
-      left: -18,
+      left: 8,
       top: "50%",
       transform: "translateY(-50%)",
 
@@ -362,7 +362,7 @@ const MostOrderedSection = () => {
       },
 
       position: "absolute",
-      right: -18,
+      right: 8,
       top: "50%",
       transform: "translateY(-50%)",
 

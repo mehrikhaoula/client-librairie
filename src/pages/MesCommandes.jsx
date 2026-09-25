@@ -25,6 +25,8 @@ const MesCommandes = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [connected, setConnected] = useState(false);
+  const [dateFilter, setDateFilter] = useState("all");
+  const [statusFilter, setStatusFilter] = useState("all");
 
   // =====================================
 // RÉCUPÉRER LES COMMANDES
@@ -134,6 +136,57 @@ useEffect(() => {
       "confirmée"
     );
   };
+
+  // =====================================
+// FILTRES
+// =====================================
+
+const filteredOrders = orders.filter((order) => {
+  // ============================
+  // FILTRE STATUT
+  // ============================
+
+  const status = getOrderStatus(order);
+
+  const matchesStatus =
+    statusFilter === "all" ||
+    status === statusFilter;
+
+  // ============================
+  // FILTRE DATE
+  // ============================
+
+  if (dateFilter === "all") {
+    return matchesStatus;
+  }
+
+  if (!order.createdAt) {
+    return false;
+  }
+
+  const orderDate = new Date(order.createdAt);
+  const now = new Date();
+
+  let startDate = new Date(now);
+
+  if (dateFilter === "today") {
+    startDate.setHours(0, 0, 0, 0);
+  }
+
+  if (dateFilter === "7days") {
+    startDate.setDate(now.getDate() - 7);
+  }
+
+  if (dateFilter === "30days") {
+    startDate.setDate(now.getDate() - 30);
+  }
+
+  return (
+    matchesStatus &&
+    orderDate >= startDate &&
+    orderDate <= now
+  );
+});
 
   // =====================================
   // Modifier une commande
@@ -251,6 +304,7 @@ const handleEditOrder = (order) => {
           Mes commandes 📦
         </Typography>
 
+
         <Typography
           color="text.secondary"
           mb={3}
@@ -297,7 +351,96 @@ const handleEditOrder = (order) => {
         Mes commandes 📦
       </Typography>
 
-      {orders.map((order, index) => {
+      <Box
+  sx={{
+    display: "flex",
+    gap: 2,
+    flexWrap: "wrap",
+    mb: 4,
+  }}
+>
+  {/* FILTRE DATE */}
+  <Box sx={{ flex: 1, minWidth: 180 }}>
+    <Typography
+      fontSize="14px"
+      fontWeight="600"
+      mb={0.5}
+    >
+      Date
+    </Typography>
+
+    <select
+      value={dateFilter}
+      onChange={(e) =>
+        setDateFilter(e.target.value)
+      }
+      style={{
+        width: "100%",
+        padding: "10px 12px",
+        borderRadius: "8px",
+        border: "1px solid #d1d5db",
+        background: "white",
+        fontSize: "14px",
+      }}
+    >
+      <option value="all">
+        Toutes les dates
+      </option>
+
+      <option value="today">
+        Aujourd'hui
+      </option>
+
+      <option value="7days">
+        7 derniers jours
+      </option>
+
+      <option value="30days">
+        30 derniers jours
+      </option>
+    </select>
+  </Box>
+
+  {/* FILTRE STATUT */}
+  <Box sx={{ flex: 1, minWidth: 180 }}>
+    <Typography
+      fontSize="14px"
+      fontWeight="600"
+      mb={0.5}
+    >
+      Statut
+    </Typography>
+
+    <select
+      value={statusFilter}
+      onChange={(e) =>
+        setStatusFilter(e.target.value)
+      }
+      style={{
+        width: "100%",
+        padding: "10px 12px",
+        borderRadius: "8px",
+        border: "1px solid #d1d5db",
+        background: "white",
+        fontSize: "14px",
+      }}
+    >
+      <option value="all">
+        Tous les statuts
+      </option>
+
+      <option value="en attente">
+        En attente
+      </option>
+
+      <option value="confirmée">
+        Confirmée
+      </option>
+    </select>
+  </Box>
+</Box>
+
+      {filteredOrders.map((order, index) => {
         const pending =
           isPending(order);
 
