@@ -111,8 +111,6 @@ const UserLogin = ({ open, onClose, onSuccess }) => {
         }
       );
 
-      console.log("LOGIN SUCCESS:", response.data);
-
       if (response.status === 200) {
         // =====================================================
         // METTRE À JOUR AUTH CONTEXT
@@ -151,8 +149,7 @@ const UserLogin = ({ open, onClose, onSuccess }) => {
         }, 500);
       }
     } catch (error) {
-      console.error("USER LOGIN ERROR:", error);
-
+    
       setLoginError("Email ou mot de passe incorrect");
     } finally {
       setLoading(false);

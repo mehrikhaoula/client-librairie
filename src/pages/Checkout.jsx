@@ -179,12 +179,9 @@ const Checkout = () => {
       });
 
     } catch (err) {
-      console.log(err);
-
       setError(
         "Erreur lors de l'envoi de la commande."
       );
-
       toast.error(
         "Erreur lors de l'envoi de la commande."
       );

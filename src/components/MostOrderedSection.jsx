@@ -47,17 +47,7 @@ const MostOrderedSection = () => {
 
         setProducts(mostOrdered);
 
-        console.log(
-          "🔥 Les plus commandés :",
-          mostOrdered
-        );
-
       } catch (error) {
-        console.error(
-          "❌ Erreur récupération les plus commandés :",
-          error
-        );
-
         setProducts([]);
       }
     };

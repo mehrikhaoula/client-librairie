@@ -44,46 +44,35 @@ const HomeCategorySection = ({
   // ==========================================
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-       const response = await axios.get(
-  endpoint.getAllProduit
-);
+  const fetchProducts = async () => {
+    try {
+      const response = await axios.get(
+        endpoint.getAllProduit
+      );
 
-console.log("🔥 PRODUITS RESPONSE :", response.data);
-console.log("🔥 TYPE :", Array.isArray(response.data));
-console.log("🔥 DATA :", response.data.data);
+      const allProducts = Array.isArray(response.data)
+        ? response.data
+        : response.data.data || [];
 
-const allProducts = Array.isArray(response.data)
-  ? response.data
-  : response.data.data || [];
+      const categoryProducts = allProducts.filter(
+        (product) =>
+          product.category
+            ?.trim()
+            .toLowerCase() ===
+          category
+            .trim()
+            .toLowerCase()
+      );
 
-console.log("🔥 ALL PRODUCTS :", allProducts);
+      setProducts(
+        categoryProducts.slice(0, 8)
+      );
+    } catch (error) {
+    }
+  };
 
-        const categoryProducts =
-          allProducts.filter(
-            (product) =>
-              product.category
-                ?.trim()
-                .toLowerCase() ===
-              category
-                .trim()
-                .toLowerCase()
-          );
-
-        setProducts(
-          categoryProducts.slice(0, 8)
-        );
-      } catch (error) {
-        console.error(
-          `Erreur produits ${category} :`,
-          error
-        );
-      }
-    };
-
-    fetchProducts();
-  }, [category]);
+  fetchProducts();
+}, [category]);
 
   // ==========================================
   // SLUG

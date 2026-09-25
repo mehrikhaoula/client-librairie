@@ -109,13 +109,11 @@ const Register = () => {
 }
 
     } catch (error) {
-      console.error("REGISTER ERROR:", error);
-
-      toast.error(
-        error.response?.data?.message ||
-          "Erreur lors de la création du compte."
-      );
-    } finally {
+  toast.error(
+    error.response?.data?.message ||
+      "Erreur lors de la création du compte."
+  );
+} finally {
       setLoading(false);
     }
   };

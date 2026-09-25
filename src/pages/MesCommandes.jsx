@@ -35,27 +35,12 @@ const MesCommandes = () => {
 const fetchOrders = useCallback(async () => {
   try {
     setLoading(true);
-
-    console.log("🔐 Vérification commandes...");
-    console.log("🌐 URL:", endpoint.myOrders);
-
     const response = await axios.get(
       endpoint.myOrders,
       {
         withCredentials: true,
       }
     );
-
-    console.log(
-      "✅ MY ORDERS STATUS:",
-      response.status
-    );
-
-    console.log(
-      "✅ MY ORDERS RESPONSE:",
-      response.data
-    );
-
     setConnected(true);
 
     setOrders(
@@ -64,31 +49,11 @@ const fetchOrders = useCallback(async () => {
         []
     );
   } catch (error) {
-    console.error(
-      "❌ MES COMMANDES ERROR:",
-      error
-    );
-
-    if (axios.isAxiosError(error)) {
-      console.error(
-        "❌ STATUS:",
-        error.response?.status
-      );
-
-      console.error(
-        "❌ DATA:",
-        error.response?.data
-      );
-    }
 
     if (
       axios.isAxiosError(error) &&
       error.response?.status === 401
     ) {
-      console.log(
-        "🚫 Non connecté → Login"
-      );
-
       setConnected(false);
       setLoginOpen(true);
 
@@ -193,10 +158,6 @@ const filteredOrders = orders.filter((order) => {
   // =====================================
 
 const handleEditOrder = (order) => {
-  console.log(
-    "✏️ Modification commande :",
-    order._id
-  );
 
   navigate(`/modifier-commande/${order._id}`, {
     state: {

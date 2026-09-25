@@ -101,10 +101,10 @@ const ForgotPassword = () => {
         setStep(3);
       }
     } catch (error) {
-  console.log("FORGOT PASSWORD ERROR:", error);
-  console.log("STATUS:", error.response?.status);
-  console.log("DATA:", error.response?.data);
-  console.log("MESSAGE:", error.response?.data?.message);
+  toast.error(
+    error.response?.data?.message ||
+      "Impossible d'envoyer le code. Veuillez réessayer."
+  );
 }
     finally {
       setLoading(false);
@@ -143,14 +143,12 @@ const ForgotPassword = () => {
 
         setStep(4);
       }
-    } catch (error) {
-      console.error("VERIFY CODE ERROR:", error);
-
-      toast.error(
-        error.response?.data?.message ||
-          "Code incorrect ou expiré."
-      );
-    } finally {
+   } catch (error) {
+  toast.error(
+    error.response?.data?.message ||
+      "Code incorrect ou expiré."
+  );
+} finally {
       setLoading(false);
     }
   };
@@ -211,13 +209,11 @@ const ForgotPassword = () => {
         }, 1000);
       }
     } catch (error) {
-      console.error("RESET PASSWORD ERROR:", error);
-
-      toast.error(
-        error.response?.data?.message ||
-          "Impossible de réinitialiser le mot de passe."
-      );
-    } finally {
+  toast.error(
+    error.response?.data?.message ||
+      "Impossible de réinitialiser le mot de passe."
+  );
+} finally {
       setLoading(false);
     }
   };

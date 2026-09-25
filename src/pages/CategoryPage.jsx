@@ -213,24 +213,13 @@ const CategoryPage = () => {
         );
 
       } catch (error) {
-
-        console.error(
-          "Erreur récupération produits :",
-          error
-        );
-
-      } finally {
-
+        } finally {
         setLoading(false);
-
       }
-
     };
 
     fetchProducts();
-
   }, []);
-
 
   // ===================================================
   // CATEGORY CHANGE ANIMATION + RESET

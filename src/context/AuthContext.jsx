@@ -21,8 +21,6 @@ export const AuthProvider = ({ children }) => {
 
   const checkAuth = async () => {
     try {
-      console.log("🔐 AUTH → vérification session...");
-
       const response = await axios.get(
         endpoint.getMe,
         {
@@ -37,18 +35,11 @@ export const AuthProvider = ({ children }) => {
         setUser(response.data.user);
         setIsAuthenticated(true);
 
-        console.log(
-          "✅ USER CONNECTÉ:",
-          response.data.user
-        );
       } else {
         setUser(null);
         setIsAuthenticated(false);
       }
     } catch (error) {
-      console.log(
-        "❌ USER NON CONNECTÉ"
-      );
 
       setUser(null);
       setIsAuthenticated(false);
@@ -79,18 +70,11 @@ export const AuthProvider = ({ children }) => {
   // ============================
 
   const logout = async () => {
-    try {
       // On ajoutera la vraie route logout après
       setUser(null);
       setIsAuthenticated(false);
 
       localStorage.removeItem("user");
-    } catch (error) {
-      console.error(
-        "LOGOUT ERROR:",
-        error
-      );
-    }
   };
 
   return (

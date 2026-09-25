@@ -78,11 +78,6 @@ const ModifierCommande = () => {
 
         startEditingOrder(response.data);
       } catch (error) {
-        console.error(
-          "Erreur chargement commande :",
-          error
-        );
-
         alert(
           error.response?.data?.message ||
             "Impossible de charger la commande."
@@ -155,12 +150,8 @@ const ModifierCommande = () => {
       cancelEditingOrder();
 
       navigate("/mes-commandes");
+      
     } catch (error) {
-      console.error(
-        "Erreur modification commande :",
-        error
-      );
-
       alert(
         error.response?.data?.message ||
           "Impossible de modifier la commande."

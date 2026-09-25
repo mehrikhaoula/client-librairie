@@ -46,21 +46,10 @@ const ProductsSection = ({
   axios
     .get(endpoint.getAllProduit)
     .then((res) => {
-        console.log(
-          "📦 PRODUIT :",
-          res.data.data[0]
-        );
-
-        console.log(
-          "🖼️ IMAGE URL :",
-          res.data.data[0]?.imageUrl
-        );
 
         setProducts(res.data.data);
       })
-      .catch((err) =>
-        console.log(err)
-      );
+     .catch(() => {});
   }, []);
 
   // =========================
