@@ -436,6 +436,10 @@ const handleEditOrder = (order) => {
       <option value="confirmée">
         Confirmée
       </option>
+
+      <option value="livrée">
+        livrée
+      </option>
     </select>
   </Box>
 </Box>
